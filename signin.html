@@ -35,15 +35,32 @@
                 <p class="auth-subtitle">Sign in to access your student utilities dashboard</p>
             </div>
 
-            <form id="signInForm" class="auth-form">
+            <form id="signInForm" class="auth-form" novalidate>
+                <!-- Registration Number Field (Gatekeeper) -->
                 <div class="form-group">
-                    <label for="username">Student Username / Email</label>
-                    <input type="text" id="username" name="username" placeholder="e.g., craigmzumara" required>
+                    <label for="regNumber">Registration Number</label>
+                    <input 
+                        type="text" 
+                        id="regNumber" 
+                        name="regNumber" 
+                        placeholder="e.g., BED/SCI/473/23" 
+                        required
+                        autocomplete="off"
+                    >
+                    <!-- Holds live validation text message -->
+                    <div id="validationFeedback" class="feedback-message"></div>
                 </div>
 
+                <!-- Password Field -->
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your account password" required>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Enter your account password" 
+                        required
+                    >
                 </div>
 
                 <button type="submit" class="btn-primary btn-block">Sign In</button>

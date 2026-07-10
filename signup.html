@@ -35,25 +35,70 @@
                 <p class="auth-subtitle">Join the independent campus network</p>
             </div>
 
-            <form id="signUpForm" class="auth-form">
+            <form id="signUpForm" class="auth-form" novalidate>
+                <!-- Full Name Field -->
                 <div class="form-group">
-                    <label for="reg-fullname">Full Name</label>
-                    <input type="text" id="reg-fullname" name="fullname" placeholder="e.g., Craig Mzumara" required>
+                    <label for="fullName">Full Name</label>
+                    <input 
+                        type="text" 
+                        id="fullName" 
+                        name="fullname" 
+                        placeholder="e.g., Craig Mzumara" 
+                        required
+                    >
                 </div>
 
+                <!-- Registration Number Field (Gatekeeper) -->
                 <div class="form-group">
-                    <label for="reg-username">Username</label>
-                    <input type="text" id="reg-username" name="username" placeholder="Choose a unique username" required>
+                    <label for="regNumber">Registration Number</label>
+                    <input 
+                        type="text" 
+                        id="regNumber" 
+                        name="regNumber" 
+                        placeholder="e.g., BED/SCI/473/23" 
+                        required
+                        autocomplete="off"
+                    >
+                    <!-- Holds live validation text message -->
+                    <div id="validationFeedback" class="feedback-message"></div>
                 </div>
 
+                <!-- WhatsApp Contact Number -->
                 <div class="form-group">
-                    <label for="reg-phone">WhatsApp Number</label>
-                    <input type="tel" id="reg-phone" name="phone" placeholder="e.g., +265999000000" required>
+                    <label for="whatsappNumber">WhatsApp Number</label>
+                    <input 
+                        type="tel" 
+                        id="whatsappNumber" 
+                        name="phone" 
+                        placeholder="e.g., +265999000000" 
+                        required
+                    >
                 </div>
 
+                <!-- Password Field -->
                 <div class="form-group">
-                    <label for="reg-password">Password</label>
-                    <input type="password" id="reg-password" name="password" placeholder="Create a strong password" required>
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Create a strong password" 
+                        required
+                    >
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        name="confirmPassword" 
+                        placeholder="Repeat your password" 
+                        required
+                    >
+                    <!-- Holds match validation text message -->
+                    <div id="passwordFeedback" class="feedback-message"></div>
                 </div>
 
                 <button type="submit" class="btn-primary btn-block">Create Account</button>

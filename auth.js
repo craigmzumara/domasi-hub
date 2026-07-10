@@ -20,18 +20,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (regPattern.test(value)) {
-            // Keep it completely silent. Remove classes and text to keep attackers guessing.
+            // Keep it completely silent on success
             regInput.className = "";
             regFeedback.textContent = "";
         } else {
-            // Only flag errors when they leave the field completely
+            // Flag formatting error when focus leaves the input field
             regInput.className = "invalid";
             regFeedback.textContent = "Invalid entry.";
             regFeedback.className = "feedback-message error";
         }
     });
 
-    // Clear error style immediately when they click back inside to fix it
+    // Clear error UI styling instantly when clicking inside to edit
     regInput.addEventListener('focus', () => {
         regInput.className = "";
         regFeedback.textContent = "";
@@ -62,16 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
     passwordInput.addEventListener('input', checkPasswords);
     confirmInput.addEventListener('input', checkPasswords);
 
-    // 3. Prevent Form Submission If Submitting Invalid Info
+    // 3. Form Submission Handling & Session Generation
     signUpForm.addEventListener('submit', (e) => {
-        const isRegValid = /^BED\/(SCI|HUM|SSC|LAC)(?:\/ODEL)?\/\d{3,4}\/\d{2}$/i.test(regInput.value.trim());
-        const doPasswordsMatch = passwordInput.value === confirmInput.value;
+        e.preventDefault(); // Stop standard form reload
 
-        if (!isRegValid || !doPasswordsMatch || passwordInput.value === "") {
-            e.preventDefault(); 
-            alert("Please complete the form correctly before continuing.");
-        } else {
-            alert("Validation passed! Forwarding details.");
-        }
-    });
-});y
+        const fullNameInput = document.getElementById('fullName');
+        const isRegValid = /^BED\/(SCI|HUM|SSC|LAC)(?:\/ODEL)?\/\d{3,
