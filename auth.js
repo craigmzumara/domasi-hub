@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // DOM Element Selectors
+    const fullNameInput = document.getElementById('fullName');
+    const whatsappInput = document.getElementById('whatsappNumber');
     const regInput = document.getElementById('regNumber');
     const regFeedback = document.getElementById('validationFeedback');
     
@@ -20,18 +23,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (regPattern.test(value)) {
-            // Keep it completely silent on success
+            // Keep it completely silent. Remove classes and text to keep attackers guessing.
             regInput.className = "";
             regFeedback.textContent = "";
         } else {
-            // Flag formatting error when focus leaves the input field
+            // Only flag errors when they leave the field completely
             regInput.className = "invalid";
             regFeedback.textContent = "Invalid entry.";
             regFeedback.className = "feedback-message error";
         }
     });
 
-    // Clear error UI styling instantly when clicking inside to edit
+    // Clear error style immediately when they click back inside to fix it
     regInput.addEventListener('focus', () => {
         regInput.className = "";
         regFeedback.textContent = "";
@@ -62,9 +65,49 @@ document.addEventListener('DOMContentLoaded', () => {
     passwordInput.addEventListener('input', checkPasswords);
     confirmInput.addEventListener('input', checkPasswords);
 
-    // 3. Form Submission Handling & Session Generation
+    // 3. Prevent Form Submission If Submitting Invalid Info & Send to PHP
     signUpForm.addEventListener('submit', (e) => {
-        e.preventDefault(); // Stop standard form reload
+        e.preventDefault();
 
-        const fullNameInput = document.getElementById('fullName');
-        const isRegValid = /^BED\/(SCI|HUM|SSC|LAC)(?:\/ODEL)?\/\d{3,
+        const rawReg = regInput.value.trim();
+        const isRegValid = /^BED\/(SCI|HUM|SSC|LAC)(?:\/ODEL)?\/\d{3,4}\/\d{2}$/i.test(rawReg);
+        const doPasswordsMatch = passwordInput.value === confirmInput.value;
+
+        if (!isRegValid || !doPasswordsMatch || passwordInput.value === "" || fullNameInput.value.trim() === "") {
+            alert("Please complete the form correctly before continuing.");
+            return;
+        }
+
+        // Bundle payload to dispatch to XAMPP backend server
+        const payload = {
+            fullname: fullNameInput.value.trim(),
+            regNumber: rawReg,
+            whatsapp: whatsappInput.value.trim(),
+            password: passwordInput.value
+        };
+
+        fetch('signup.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                // Initialize session logs
+                localStorage.setItem('user_name', payload.fullname);
+                localStorage.setItem('user_reg', payload.regNumber);
+                localStorage.setItem('isLoggedIn', 'true');
+
+                alert(data.message);
+                window.location.href = 'portal.html';
+            } else {
+                alert(data.message); // Displays structural duplicate key errors
+            }
+        })
+        .catch(err => {
+            console.error("Error connecting to API layer:", err);
+            alert("Unable to reach authentication server.");
+        });
+    });
+});
