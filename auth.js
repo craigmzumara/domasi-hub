@@ -23,11 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (regPattern.test(value)) {
-            // Keep it completely silent. Remove classes and text to keep attackers guessing.
             regInput.className = "";
             regFeedback.textContent = "";
         } else {
-            // Only flag errors when they leave the field completely
             regInput.className = "invalid";
             regFeedback.textContent = "Invalid entry.";
             regFeedback.className = "feedback-message error";
@@ -65,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     passwordInput.addEventListener('input', checkPasswords);
     confirmInput.addEventListener('input', checkPasswords);
 
-    // 3. Prevent Form Submission If Submitting Invalid Info & Send to PHP
+    // 3. Prevent Form Submission If Submitting Invalid Info & Send to SQLite Backend
     signUpForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -78,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Bundle payload to dispatch to XAMPP backend server
         const payload = {
             fullname: fullNameInput.value.trim(),
             regNumber: rawReg,
@@ -86,7 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
             password: passwordInput.value
         };
 
-        fetch('signup.php', {
+        // Dispatched to Node.js / Express backend
+        fetch('http://localhost:3000/api/auth/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -94,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             if (data.status === "success") {
-                // Initialize session logs
                 localStorage.setItem('user_name', payload.fullname);
                 localStorage.setItem('user_reg', payload.regNumber);
                 localStorage.setItem('isLoggedIn', 'true');
@@ -102,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(data.message);
                 window.location.href = 'portal.html';
             } else {
-                alert(data.message); // Displays structural duplicate key errors
+                alert(data.message);
             }
         })
         .catch(err => {

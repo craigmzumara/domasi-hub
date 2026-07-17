@@ -1,0 +1,29 @@
+{
+  "name": "domasi-hub",
+  "version": "1.0.0",
+  "description": "",
+  "main": "auth-signin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/craigmzumara/domasi-hub.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/craigmzumara/domasi-hub/issues"
+  },
+  "homepage": "https://github.com/craigmzumara/domasi-hub#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.4.2",
+    "@capacitor/cli": "^8.4.2",
+    "@capacitor/core": "^8.4.2",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "sqlite3": "^6.0.1"
+  }
+}

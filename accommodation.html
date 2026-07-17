@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accommodation Directory | Domasi Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo"><h1><a href="index.html" style="color: white; text-decoration: none;">Domasi Hub</a></h1></div>
+        <nav class="main-nav">
+            <!-- Managed Dynamically by accommodation.js -->
+            <div id="portalNavWrapper"></div>
+        </nav>
+    </header>
+
+    <main class="accommodation-container">
+        <section class="section-title">
+            <h3>Accommodation Directory</h3>
+            <p>Verified off-campus student boarding houses and rental units near Domasi.</p>
+        </section>
+
+        <!-- Dynamic Container -->
+        <section class="rooms-grid" id="accommodation-grid">
+            <p style="text-align: center; padding: 2rem; width: 100%;">Loading hostels...</p>
+        </section>
+    </main>
+
+    <script src="accommodation.js"></script>
+    <script src="theme.js"></script>
+</body>
+</html>

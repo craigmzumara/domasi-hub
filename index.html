@@ -18,8 +18,11 @@
                     <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </button>
             </div>
-            <a href="signin.html" class="btn-nav-signin">Sign In</a>
-            <a href="signup.html" class="btn-nav-register">Register</a>
+            <!-- Dynamic Injection Point for Auth Status Controls -->
+            <div id="authNavContainer" style="display: flex; gap: 1rem; align-items: center;">
+                <a href="signin.html" class="btn-nav-signin">Sign In</a>
+                <a href="signup.html" class="btn-nav-register">Register</a>
+            </div>
         </nav>
     </header>
 
@@ -35,21 +38,21 @@
                 <div style="font-size: 2.5rem; color: var(--primary-color);">🛒</div>
                 <h4 style="margin: 1rem 0 0.5rem 0; font-size: 1.25rem;">Campus Marketplace</h4>
                 <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">Buy or sell academic modules, textbooks, electronics, mattresses, and student essentials directly via WhatsApp networks.</p>
-                <a href="marketplace.php" class="btn-primary" style="margin-top: auto; display: inline-block; text-align: center; text-decoration: none; padding: 0.75rem; background: var(--primary-color); color: white; border-radius: 6px; font-weight: 600;">Explore Market</a>
+                <a href="marketplace.html" class="btn-primary" style="margin-top: auto; display: inline-block; text-align: center; text-decoration: none; padding: 0.75rem; background: var(--primary-color); color: white; border-radius: 6px; font-weight: 600;">Explore Market</a>
             </div>
 
             <div class="module-card" style="display: flex; flex-direction: column; background: var(--bg-surface); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-subtle); box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
                 <div style="font-size: 2.5rem; color: var(--primary-color);">🖨️</div>
                 <h4 style="margin: 1rem 0 0.5rem 0; font-size: 1.25rem;">Student Printing Hub</h4>
                 <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">Locate operational, student-run print configurations across campus blocks. Upload assignment files instantly for queue printing.</p>
-                <a href="printing.php" class="btn-primary" style="margin-top: auto; display: inline-block; text-align: center; text-decoration: none; padding: 0.75rem; background: var(--primary-color); color: white; border-radius: 6px; font-weight: 600;">Find Printers</a>
+                <a href="printing.html" class="btn-primary" style="margin-top: auto; display: inline-block; text-align: center; text-decoration: none; padding: 0.75rem; background: var(--primary-color); color: white; border-radius: 6px; font-weight: 600;">Find Printers</a>
             </div>
 
             <div class="module-card" style="display: flex; flex-direction: column; background: var(--bg-surface); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-subtle); box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
                 <div style="font-size: 2.5rem; color: var(--primary-color);">🏠</div>
                 <h4 style="margin: 1rem 0 0.5rem 0; font-size: 1.25rem;">Accommodation Directory</h4>
                 <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">Browse verified off-campus rentals, student boarding complexes, and bedspaces complete with direct landlord contact links.</p>
-                <a href="accommodation.php" class="btn-primary" style="margin-top: auto; display: inline-block; text-align: center; text-decoration: none; padding: 0.75rem; background: var(--primary-color); color: white; border-radius: 6px; font-weight: 600;">View Hostels</a>
+                <a href="accommodation.html" class="btn-primary" style="margin-top: auto; display: inline-block; text-align: center; text-decoration: none; padding: 0.75rem; background: var(--primary-color); color: white; border-radius: 6px; font-weight: 600;">View Hostels</a>
             </div>
 
         </section>
@@ -60,5 +63,14 @@
     </footer>
 
     <script src="theme.js"></script>
+    <script>
+        // Check session status on index page load
+        document.addEventListener("DOMContentLoaded", () => {
+            const container = document.getElementById("authNavContainer");
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                container.innerHTML = `<a href="portal.html" class="btn-nav-register">Go to Portal</a>`;
+            }
+        });
+    </script>
 </body>
 </html>

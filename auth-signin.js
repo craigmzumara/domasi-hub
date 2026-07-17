@@ -16,11 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (regPattern.test(value)) {
-            // Keep it silent on success to protect the institutional template format
             regInput.className = "";
             regFeedback.textContent = "";
         } else {
-            // Drop a generic error message only on blur
             regInput.className = "invalid";
             regFeedback.textContent = "Invalid credentials.";
             regFeedback.className = "feedback-message error";
@@ -33,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         regFeedback.textContent = "";
     });
 
-    // Intercept form submission & Send to PHP
+    // Intercept form submission & Send to Node/Express
     signInForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -41,18 +39,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const isRegValid = /^BED\/(SCI|HUM|SSC|LAC)(?:\/ODEL)?\/\d{3,4}\/\d{2}$/i.test(rawReg);
 
         if (!isRegValid || passwordInput.value.trim() === "") {
-            // Generic security alert
             alert("Invalid sign-in attempt. Please verify your entries.");
             return;
         }
 
-        // Bundle payload to dispatch to XAMPP sign-in service
         const payload = {
             regNumber: rawReg,
             password: passwordInput.value
         };
 
-        fetch('signin.php', {
+        // Dispatched to Node.js sign-in service
+        fetch('http://localhost:3000/api/auth/signin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -60,14 +57,13 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             if (data.status === "success") {
-                // Initialize session logs using real backend records
                 localStorage.setItem('user_name', data.user.fullname);
                 localStorage.setItem('user_reg', data.user.regNumber);
                 localStorage.setItem('isLoggedIn', 'true');
 
                 window.location.href = 'portal.html';
             } else {
-                alert(data.message); // Displays structural "Invalid credentials."
+                alert(data.message);
             }
         })
         .catch(err => {

@@ -22,7 +22,6 @@
         font-size: 0.9rem;
         color: var(--text-core);
     }
-    /* Fixed text inputs with uniform height - no multi-line scrollers */
     .hub-form-group input[type="text"],
     .hub-form-group input[type="number"],
     .hub-form-group select {
@@ -97,15 +96,14 @@
         </div>
     </main>
 
-<div id="marketplaceModal" class="modal-overlay">
+    <!-- Marketplace Modal -->
+    <div id="marketplaceModal" class="modal-overlay">
         <div class="modal-content" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 2rem; max-width: 500px; width: 100%;">
             <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
                 <h3 style="color: var(--text-core); margin: 0;">🛒 List Marketplace Item</h3>
                 <button class="close-modal" style="background: none; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer;">&times;</button>
             </div>
-            <form action="upload.php" method="POST" enctype="multipart/form-data" class="hub-modal-form">
-                <input type="hidden" name="category" value="marketplace">
-                
+            <form id="marketplaceForm" class="hub-modal-form">
                 <div class="hub-form-group">
                     <label>Item Name / Title</label>
                     <input type="text" name="title" placeholder="e.g., Scientific Calculator, Mattress" required>
@@ -135,15 +133,14 @@
         </div>
     </div>
 
+    <!-- Printer Modal -->
     <div id="printerModal" class="modal-overlay">
         <div class="modal-content" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 2rem; max-width: 500px; width: 100%;">
             <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
                 <h3 style="color: var(--text-core); margin: 0;">🖨️ Register Printer Configuration</h3>
                 <button class="close-modal" style="background: none; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer;">&times;</button>
             </div>
-            <form action="upload.php" method="POST" enctype="multipart/form-data" class="hub-modal-form">
-                <input type="hidden" name="category" value="printing">
-                
+            <form id="printerForm" class="hub-modal-form">
                 <div class="hub-form-group">
                     <label>Printing Station / Business Name</label>
                     <input type="text" name="title" placeholder="e.g., Mzumara Tech Prints, Block 4 Hub" required>
@@ -169,15 +166,14 @@
         </div>
     </div>
 
+    <!-- Accommodation Modal -->
     <div id="accommodationModal" class="modal-overlay">
         <div class="modal-content" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 2rem; max-width: 500px; width: 100%;">
             <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
                 <h3 style="color: var(--text-core); margin: 0;">🏠 Log Hostel / Room Vacancy</h3>
                 <button class="close-modal" style="background: none; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer;">&times;</button>
             </div>
-            <form action="upload.php" method="POST" enctype="multipart/form-data" class="hub-modal-form">
-                <input type="hidden" name="category" value="accommodation">
-                
+            <form id="accommodationForm" class="hub-modal-form">
                 <div class="hub-form-group">
                     <label>Hostel Name / Bedspace Title</label>
                     <input type="text" name="title" placeholder="e.g., Single Room near Campus Gate" required>
@@ -228,6 +224,7 @@
             });
         });
     </script>
+    <script src="portal.js"></script>
     <script src="theme.js"></script>
 </body>
 </html>
