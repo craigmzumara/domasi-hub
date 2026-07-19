@@ -18,10 +18,10 @@
                     <span class="toggle-track"><span class="toggle-thumb"></span></span>
                 </button>
             </div>
+
             <!-- Dynamic Injection Point for Auth Status Controls -->
             <div id="authNavContainer" style="display: flex; gap: 1rem; align-items: center;">
-                <a href="signin.html" class="btn-nav-signin">Sign In</a>
-                <a href="signup.html" class="btn-nav-register">Register</a>
+                <!-- Default links will be injected by JS -->
             </div>
         </nav>
     </header>
@@ -29,7 +29,9 @@
     <main style="padding-bottom: 4rem;">
         <section class="section-title" style="text-align: center; margin-bottom: 3rem; margin-top: 1rem;">
             <h2>Welcome to Domasi Hub</h2>
-            <p style="font-size: 1.1rem; max-width: 600px; margin: 0.5rem auto 0 auto;">Your all-in-one student utility companion platform for campus life.</p>
+            <p style="font-size: 1.1rem; max-width: 600px; margin: 0.5rem auto 0 auto;">
+                Your all-in-one student utility companion platform for campus life.
+            </p>
         </section>
 
         <section class="services-grid" style="display: grid; gap: 2rem; padding: 0 1rem; max-width: 1200px; margin: 0 auto;">
@@ -37,21 +39,27 @@
             <div class="module-card" style="display: flex; flex-direction: column; background: var(--bg-surface); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-subtle); box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
                 <div style="font-size: 2.5rem; color: var(--primary-color);">🛒</div>
                 <h4 style="margin: 1rem 0 0.5rem 0; font-size: 1.25rem;">Campus Marketplace</h4>
-                <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">Buy or sell academic modules, textbooks, electronics, mattresses, and student essentials directly via WhatsApp networks.</p>
+                <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                    Buy or sell academic modules, textbooks, electronics, mattresses, and student essentials directly via WhatsApp networks.
+                </p>
                 <a href="marketplace.html" class="btn-primary" style="margin-top: auto; display: inline-block; text-align: center; text-decoration: none; padding: 0.75rem; background: var(--primary-color); color: white; border-radius: 6px; font-weight: 600;">Explore Market</a>
             </div>
 
             <div class="module-card" style="display: flex; flex-direction: column; background: var(--bg-surface); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-subtle); box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
                 <div style="font-size: 2.5rem; color: var(--primary-color);">🖨️</div>
                 <h4 style="margin: 1rem 0 0.5rem 0; font-size: 1.25rem;">Student Printing Hub</h4>
-                <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">Locate operational, student-run print configurations across campus blocks. Upload assignment files instantly for queue printing.</p>
+                <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                    Locate operational, student-run print configurations across campus blocks. Upload assignment files instantly for queue printing.
+                </p>
                 <a href="printing.html" class="btn-primary" style="margin-top: auto; display: inline-block; text-align: center; text-decoration: none; padding: 0.75rem; background: var(--primary-color); color: white; border-radius: 6px; font-weight: 600;">Find Printers</a>
             </div>
 
             <div class="module-card" style="display: flex; flex-direction: column; background: var(--bg-surface); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-subtle); box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
                 <div style="font-size: 2.5rem; color: var(--primary-color);">🏠</div>
                 <h4 style="margin: 1rem 0 0.5rem 0; font-size: 1.25rem;">Accommodation Directory</h4>
-                <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">Browse verified off-campus rentals, student boarding complexes, and bedspaces complete with direct landlord contact links.</p>
+                <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                    Browse verified off-campus rentals, student boarding complexes, and bedspaces complete with direct landlord contact links.
+                </p>
                 <a href="accommodation.html" class="btn-primary" style="margin-top: auto; display: inline-block; text-align: center; text-decoration: none; padding: 0.75rem; background: var(--primary-color); color: white; border-radius: 6px; font-weight: 600;">View Hostels</a>
             </div>
 
@@ -64,13 +72,35 @@
 
     <script src="theme.js"></script>
     <script>
-        // Check session status on index page load
         document.addEventListener("DOMContentLoaded", () => {
             const container = document.getElementById("authNavContainer");
+
             if (localStorage.getItem('isLoggedIn') === 'true') {
-                container.innerHTML = `<a href="portal.html" class="btn-nav-register">Go to Portal</a>`;
+                // Logged in → show portal + logout
+                container.innerHTML = `
+                    <a href="portal.html" class="btn-nav-register">Go to Portal</a>
+                    <button onclick="logout()" style="padding:0.5rem 1rem; background:#d9534f; color:white; border:none; border-radius:6px; cursor:pointer;">
+                        Logout
+                    </button>
+                `;
+            } else {
+                // Logged out → show default nav
+                container.innerHTML = `
+                    <a href="signin.html" class="btn-nav-signin">Sign In</a>
+                    <a href="signup.html" class="btn-nav-register">Register</a>
+                    <a href="dashboard.html" class="btn-nav-dashboard" style="padding:0.5rem 1rem; background: var(--primary-color); color: white; border-radius: 6px; text-decoration: none; font-weight: 600;">
+                        Dashboard
+                    </a>
+                `;
             }
         });
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            // Redirect back to main page
+            window.location.href = "index.html";
+        }
     </script>
 </body>
 </html>
