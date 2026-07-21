@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Helper function to read file as Base64
 function fileToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -43,13 +42,16 @@ async function handleFormSubmit(e, category) {
             imageBase64 = await fileToBase64(imageFile);
         }
 
-        // Construct the correct payload structure based on category
+        // Retrieve logged-in full name from local storage
+        const currentUserName = localStorage.getItem('user_name') || 'Campus Student';
+
         const payload = {
+            posted_by: currentUserName, // <-- PASSES REGISTRATION FULL NAME
             category: category,
             title: formData.get("title") || "",
             price: parseFloat(formData.get("price")) || 0,
             contact_number: formData.get("contact_number") || "",
-            image_path: imageBase64, // Storing base64 source directly in SQLite
+            image_path: imageBase64,
             item_condition: formData.get("item_condition") || "",
             security_condition: formData.get("security_condition") || "",
             location_details: formData.get("location_details") || ""
@@ -68,7 +70,6 @@ async function handleFormSubmit(e, category) {
         if (response.ok) {
             alert("Success: " + (result.message || "Listing created successfully!"));
             form.reset();
-            // Close open modal overlay
             const activeModal = form.closest(".modal-overlay");
             if (activeModal) {
                 activeModal.classList.remove("active");

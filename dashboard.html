@@ -167,10 +167,9 @@
             body: JSON.stringify({ username: inputUser, password: inputPass })
           });
 
-          // Check content type to prevent JSON parse crashes on HTML responses
           const contentType = res.headers.get("content-type");
           if (!contentType || !contentType.includes("application/json")) {
-            alert("Server returned non-JSON response. Check if backend Node server is active.");
+            alert("Server returned non-JSON response.");
             window.location.href = "index.html";
             return;
           }
@@ -198,7 +197,6 @@
       loadAdminDashboard();
     }
 
-    // Fetch and Render Listings & Services
     async function loadAdminDashboard() {
       const tbody = document.getElementById('listingsTableBody');
       tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">Fetching data from server...</td></tr>`;
@@ -235,7 +233,6 @@
       }
     }
 
-    // Delete Item
     async function deleteListing(id) {
       if (!confirm("Are you sure you want to permanently delete this listing?")) return;
 
@@ -257,7 +254,6 @@
       }
     }
 
-    // Edit Item
     async function editListing(id) {
       const newTitle = prompt("Update Title / Item Name:");
       if (newTitle === null) return;

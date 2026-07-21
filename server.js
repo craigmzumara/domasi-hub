@@ -1,4 +1,4 @@
-require('dotenv').config(); // Load environment variables from .env file
+require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
@@ -26,7 +26,6 @@ const db = new sqlite3.Database(path.join(__dirname, 'domasi_hub.db'), (err) => 
 
 // Structural Table Generation
 function createTables() {
-    // 1. Users table
     db.run(`
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,10 +36,11 @@ function createTables() {
         )
     `);
 
-    // 2. Marketplace Listings table
+    // Added posted_by column to capture the user's name
     db.run(`
         CREATE TABLE IF NOT EXISTS listings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            posted_by TEXT,
             title TEXT NOT NULL,
             category TEXT NOT NULL,
             price REAL NOT NULL,
@@ -57,7 +57,6 @@ function createTables() {
    AUTHENTICATION ENDPOINTS
    ========================================== */
 
-// 1. SIGN UP (POST http://localhost:3000/api/auth/signup)
 app.post('/api/auth/signup', async (req, res) => {
     const { fullname, regNumber, whatsapp, password } = req.body;
 
@@ -90,7 +89,6 @@ app.post('/api/auth/signup', async (req, res) => {
     }
 });
 
-// 2. SIGN IN (POST http://localhost:3000/api/auth/signin)
 app.post('/api/auth/signin', (req, res) => {
     const { regNumber, password } = req.body;
 
@@ -128,7 +126,6 @@ app.post('/api/auth/signin', (req, res) => {
     });
 });
 
-// 3. ADMIN SIGN IN (POST http://localhost:3000/api/admin/signin)
 app.post('/api/admin/signin', (req, res) => {
     const { username, password } = req.body;
 
@@ -138,7 +135,6 @@ app.post('/api/admin/signin', (req, res) => {
 
     const cleanUser = username.toLowerCase().trim();
 
-    // Environment map for co-founder passwords
     const adminPasswords = {
         craig: process.env.ADMIN_CRAIG_PASS,
         eden: process.env.ADMIN_EDEN_PASS,
@@ -165,17 +161,16 @@ app.post('/api/admin/signin', (req, res) => {
    MARKETPLACE & LISTINGS ENDPOINTS
    ========================================== */
 
-// 4. POST NEW LISTING
 app.post('/api/listings', (req, res) => {
-    const { title, category, price, contact_number, item_condition, security_condition, location_details, image_path } = req.body;
+    const { posted_by, title, category, price, contact_number, item_condition, security_condition, location_details, image_path } = req.body;
 
     if (!title || !category || !price || !contact_number) {
         return res.status(400).json({ error: "Missing required fields." });
     }
 
-    const sql = `INSERT INTO listings (title, category, price, contact_number, item_condition, security_condition, location_details, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const sql = `INSERT INTO listings (posted_by, title, category, price, contact_number, item_condition, security_condition, location_details, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     
-    db.run(sql, [title, category, price, contact_number, item_condition, security_condition, location_details, image_path || null], function (err) {
+    db.run(sql, [posted_by || 'Anonymous Student', title, category, price, contact_number, item_condition, security_condition, location_details, image_path || null], function (err) {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
@@ -183,7 +178,6 @@ app.post('/api/listings', (req, res) => {
     });
 });
 
-// 5. GET LISTINGS
 app.get('/api/listings', (req, res) => {
     const { category } = req.query;
 
@@ -206,7 +200,6 @@ app.get('/api/listings', (req, res) => {
     });
 });
 
-// 6. DELETE A LISTING
 app.delete('/api/listings/:id', (req, res) => {
     const { id } = req.params;
     const sql = `DELETE FROM listings WHERE id = ?`;
@@ -219,7 +212,6 @@ app.delete('/api/listings/:id', (req, res) => {
     });
 });
 
-// 7. EDIT A LISTING
 app.put('/api/listings/:id', (req, res) => {
     const { id } = req.params;
     const { title, price } = req.body;
@@ -238,7 +230,6 @@ app.put('/api/listings/:id', (req, res) => {
    STATIC FILES & SERVER START
    ========================================== */
 
-// Serve static files AFTER defining API routes to avoid catching API 404s as HTML
 app.use(express.static(path.join(__dirname)));
 
 app.listen(PORT, '127.0.0.1', () => {
