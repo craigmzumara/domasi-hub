@@ -2,13 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Domasi Hub</title>
   <link rel="stylesheet" href="style.css">
   <style>
+    :root {
+      --bg-dark: #121212;
+      --bg-card: #1e1e1e;
+      --border-color: #333;
+      --text-main: #f0f0f0;
+      --text-muted: #aaa;
+      --danger-color: #dc3545;
+      --warning-color: #ffc107;
+      --success-color: #28a745;
+      --primary-color: #007bff;
+    }
+
     body {
-      background-color: #d8d5d5; /* black background */
-      color: #0c0101;            /* white text */
-      font-family: Arial, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
     }
@@ -18,130 +31,241 @@
       justify-content: space-between;
       align-items: center;
       padding: 1rem 2rem;
-      background-color: #111;
-      border-bottom: 1px solid #333;
+      background-color: #1a1a1a;
+      border-bottom: 1px solid var(--border-color);
     }
 
-    header h2 {
-      margin: 0;
-      color: #fff;
+    .admin-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
     }
 
-    .logout-btn {
-      padding: 0.5rem 1rem;
-      background: #007bff; /* blue background */
-      color: #fff;         /* white text */
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
     }
 
-    .logout-btn:hover {
-      background: #0056b3; /* darker blue on hover */
-    }
-
-    #usersContainer {
-      padding: 2rem;
-    }
-
-    .user-block {
-      border: 1px solid #444;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      background-color: #222;
+    .admin-table-wrapper {
+      background: var(--bg-card);
       border-radius: 8px;
+      border: 1px solid var(--border-color);
+      overflow-x: auto;
     }
 
-    .user-block h3 {
-      margin-top: 0;
-      color: #fff;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
     }
 
-    .user-block p {
-      color: #ddd;
+    th, td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
     }
 
-    .user-block button {
-      margin-left: 0.5rem;
-      padding: 0.3rem 0.7rem;
+    th {
+      background-color: #252525;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+
+    tr:hover {
+      background-color: #282828;
+    }
+
+    .badge {
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .badge-marketplace { background: #0d6efd; color: white; }
+    .badge-printing { background: #6f42c1; color: white; }
+    .badge-accommodation { background: #198754; color: white; }
+
+    .action-btn {
+      padding: 0.4rem 0.8rem;
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-right: 0.3rem;
+      transition: opacity 0.2s;
     }
 
-    .user-block button:first-child {
-      background: #28a745; /* green for edit */
-      color: #fff;
-    }
-
-    .user-block button:last-child {
-      background: #dc3545; /* red for delete */
-      color: #fff;
-    }
+    .action-btn:hover { opacity: 0.85; }
+    .btn-edit { background: var(--warning-color); color: #000; }
+    .btn-delete { background: var(--danger-color); color: #fff; }
+    .btn-logout { background: #555; color: #fff; }
   </style>
 </head>
 <body>
+
   <header>
-    <h2>Users and Published Items</h2>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+    <h2>🛡️ Domasi Hub - Admin Command Center</h2>
+    <div>
+      <span id="adminUser" style="margin-right: 1rem; color: var(--text-muted);"></span>
+      <button class="action-btn btn-logout" onclick="logout()">Logout</button>
+    </div>
   </header>
 
-  <div id="usersContainer"></div>
+  <main class="admin-container">
+    <div class="dashboard-header">
+      <h3>Active User Listings & Service Moderation</h3>
+      <button class="action-btn btn-edit" onclick="loadAdminDashboard()">🔄 Refresh Data</button>
+    </div>
+
+    <div class="admin-table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Category</th>
+            <th>Title / Service</th>
+            <th>Price (MWK)</th>
+            <th>Contact</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="listingsTableBody">
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 2rem;">Loading listings...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
 
   <script>
-    function logout() {
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('username');
-      window.location.href = "index.html"; // back to main page
+    // Authorized admin usernames
+    const authorizedAdmins = ['eden', 'msosa', 'craig'];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      checkAdminAccess();
+    });
+
+    function checkAdminAccess() {
+      let currentUser = (localStorage.getItem('username') || '').toLowerCase().trim();
+      let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+      // If not logged in or user not authorized, prompt for admin username
+      if (!isLoggedIn || !authorizedAdmins.includes(currentUser)) {
+        const inputUser = prompt("Admin Login Required. Enter your admin handle (eden, msosa, craig):");
+        
+        if (inputUser && authorizedAdmins.includes(inputUser.toLowerCase().trim())) {
+          currentUser = inputUser.toLowerCase().trim();
+          localStorage.setItem('username', currentUser);
+          localStorage.setItem('isLoggedIn', 'true');
+        } else {
+          alert("Access Denied: Invalid Admin Handle.");
+          window.location.href = "index.html";
+          return;
+        }
+      }
+
+      document.getElementById('adminUser').innerText = `Logged in as: ${currentUser.toUpperCase()}`;
+      loadAdminDashboard();
     }
 
-    async function loadUsers() {
+    // Fetch and Render Listings & Services
+    async function loadAdminDashboard() {
+      const tbody = document.getElementById('listingsTableBody');
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">Fetching data from server...</td></tr>`;
+
       try {
-        const res = await fetch('/api/admin/users');
+        const res = await fetch('http://127.0.0.1:3000/api/listings');
         const data = await res.json();
 
-        const container = document.getElementById('usersContainer');
-        container.innerHTML = '';
+        if (data.status === 'success' && data.listings && data.listings.length > 0) {
+          tbody.innerHTML = '';
+          data.listings.forEach(item => {
+            const tr = document.createElement('tr');
+            const categoryClass = `badge-${item.category || 'marketplace'}`;
 
-        data.forEach(user => {
-          const userDiv = document.createElement('div');
-          userDiv.className = 'user-block';
-          userDiv.innerHTML = `<h3>${user.username}</h3>`;
-
-          if (user.marketplace_id) {
-            const itemDiv = document.createElement('div');
-            itemDiv.innerHTML = `
-              <p>${user.title}</p>
-              <button onclick="editItem(${user.marketplace_id})">Edit</button>
-              <button onclick="deleteItem(${user.marketplace_id})">Delete</button>
+            tr.innerHTML = `
+              <td><strong>${item.posted_by || 'Unknown User'}</strong></td>
+              <td><span class="badge ${categoryClass}">${item.category || 'General'}</span></td>
+              <td>${item.title || 'Untitled Item'}</td>
+              <td>${parseFloat(item.price || 0).toLocaleString()} MWK</td>
+              <td>${item.contact_number || 'N/A'}</td>
+              <td>
+                <button class="action-btn btn-edit" onclick="editListing(${item.id})">Edit</button>
+                <button class="action-btn btn-delete" onclick="deleteListing(${item.id})">Delete</button>
+              </td>
             `;
-            userDiv.appendChild(itemDiv);
-          }
-
-          container.appendChild(userDiv);
-        });
+            tbody.appendChild(tr);
+          });
+        } else {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No active user listings found in database.</td></tr>`;
+        }
       } catch (err) {
-        console.error("Error loading users:", err);
+        console.error("Error loading admin data:", err);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--danger-color);">Error connecting to backend API.</td></tr>`;
       }
     }
 
-    async function deleteItem(id) {
-      await fetch('/api/admin/item/' + id, { method: 'DELETE' });
-      loadUsers();
+    // Delete Item
+    async function deleteListing(id) {
+      if (!confirm("Are you sure you want to permanently delete this listing?")) return;
+
+      try {
+        const response = await fetch(`http://127.0.0.1:3000/api/listings/${id}`, {
+          method: 'DELETE'
+        });
+        const result = await response.json();
+
+        if (response.ok) {
+          alert("Item successfully purged from platform.");
+          loadAdminDashboard();
+        } else {
+          alert("Delete failed: " + (result.error || "Server error"));
+        }
+      } catch (err) {
+        console.error("Delete request error:", err);
+        alert("Failed to send delete request to backend server.");
+      }
     }
 
-    function editItem(id) {
-      const newTitle = prompt("Enter new title:");
-      const newDesc = prompt("Enter new description:");
-      fetch('/api/admin/item/' + id, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: newTitle, description: newDesc })
-      }).then(loadUsers);
+    // Edit Item
+    async function editListing(id) {
+      const newTitle = prompt("Update Title / Item Name:");
+      if (newTitle === null) return;
+
+      const newPrice = prompt("Update Price (MWK):");
+      if (newPrice === null) return;
+
+      try {
+        const response = await fetch(`http://127.0.0.1:3000/api/listings/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: newTitle, price: parseFloat(newPrice) || 0 })
+        });
+
+        if (response.ok) {
+          alert("Listing details updated!");
+          loadAdminDashboard();
+        } else {
+          alert("Update failed.");
+        }
+      } catch (err) {
+        console.error("Update request error:", err);
+        alert("Failed to send update request.");
+      }
     }
 
-    loadUsers();
+    function logout() {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('username');
+      window.location.href = "index.html";
+    }
   </script>
 </body>
 </html>

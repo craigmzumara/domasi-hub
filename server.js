@@ -11,6 +11,7 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.static(path.join(__dirname)));
 
 // Initialize SQLite Database
 const db = new sqlite3.Database(path.join(__dirname, 'domasi_hub.db'), (err) => {
@@ -149,17 +150,19 @@ app.post('/api/listings', (req, res) => {
     });
 });
 
-// 4. GET ACTIVE LISTINGS BY CATEGORY (GET http://localhost:3000/api/listings?category=XYZ)
+// 4. GET LISTINGS (Returns category specific OR all listings for Admin Dashboard)
 app.get('/api/listings', (req, res) => {
     const { category } = req.query;
 
-    if (!category) {
-        return res.status(400).json({ status: "error", message: "Category query parameter is required." });
+    let sql = `SELECT * FROM listings ORDER BY id DESC`;
+    let params = [];
+
+    if (category) {
+        sql = `SELECT * FROM listings WHERE category = ? ORDER BY id DESC`;
+        params = [category];
     }
 
-    const sql = `SELECT * FROM listings WHERE category = ? ORDER BY id DESC`;
-
-    db.all(sql, [category], (err, rows) => {
+    db.all(sql, params, (err, rows) => {
         if (err) {
             return res.status(500).json({ status: "error", error: err.message });
         }
@@ -167,6 +170,34 @@ app.get('/api/listings', (req, res) => {
             status: "success",
             listings: rows
         });
+    });
+});
+
+// 5. DELETE A LISTING (DELETE http://localhost:3000/api/listings/:id)
+app.delete('/api/listings/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = `DELETE FROM listings WHERE id = ?`;
+
+    db.run(sql, [id], function (err) {
+        if (err) {
+            return res.status(500).json({ status: "error", error: err.message });
+        }
+        res.status(200).json({ status: "success", message: "Listing deleted successfully." });
+    });
+});
+
+// 6. EDIT A LISTING (PUT http://localhost:3000/api/listings/:id)
+app.put('/api/listings/:id', (req, res) => {
+    const { id } = req.params;
+    const { title, price } = req.body;
+
+    const sql = `UPDATE listings SET title = ?, price = ? WHERE id = ?`;
+
+    db.run(sql, [title, price, id], function (err) {
+        if (err) {
+            return res.status(500).json({ status: "error", error: err.message });
+        }
+        res.status(200).json({ status: "success", message: "Listing updated successfully." });
     });
 });
 

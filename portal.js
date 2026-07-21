@@ -29,8 +29,10 @@ async function handleFormSubmit(e, category) {
     const form = e.target;
     const submitBtn = form.querySelector('button[type="submit"]');
     
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Publishing...";
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Publishing...";
+    }
 
     try {
         const formData = new FormData(form);
@@ -64,7 +66,7 @@ async function handleFormSubmit(e, category) {
         const result = await response.json();
 
         if (response.ok) {
-            alert("Success: " + result.message);
+            alert("Success: " + (result.message || "Listing created successfully!"));
             form.reset();
             // Close open modal overlay
             const activeModal = form.closest(".modal-overlay");
@@ -79,8 +81,10 @@ async function handleFormSubmit(e, category) {
         console.error("Submission failed:", error);
         alert("Server communication error. Check if backend is running.");
     } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = category === "printing" ? "Launch Station" : 
-                               category === "accommodation" ? "Publish Lodging Unit" : "Publish Item";
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = category === "printing" ? "Launch Station" : 
+                                   category === "accommodation" ? "Publish Lodging Unit" : "Publish Item";
+        }
     }
 }
