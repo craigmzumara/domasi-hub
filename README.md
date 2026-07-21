@@ -38,3 +38,4 @@ A modern, mobile-responsive campus utility platform designed for students.
 2. Install dependencies:
    ```bash
    npm install
+   
