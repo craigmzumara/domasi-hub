@@ -36,7 +36,6 @@ function createTables() {
         )
     `);
 
-    // Added posted_by column to capture the user's name
     db.run(`
         CREATE TABLE IF NOT EXISTS listings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

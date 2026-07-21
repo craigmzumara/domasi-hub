@@ -11,13 +11,28 @@
         <div class="logo">
             <h1>
                 <a href="index.html" style="text-decoration: none;">
-                    <img src="Logo.svg" alt="Domasi Hub Logo" style="height:50px;">
+                    <img src="Logo.svg" alt="Domasi Hub Logo" style="height:48px;">
                 </a>
             </h1>
         </div>
         <nav class="main-nav">
-            <!-- Managed Dynamically by printing.js -->
             <div id="portalNavWrapper"></div>
+
+            <div class="theme-switch-wrapper">
+                <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle Dark Mode">
+                    <span class="toggle-track">
+                        <span class="toggle-thumb">
+                            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="4"/>
+                                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                            </svg>
+                            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                            </svg>
+                        </span>
+                    </span>
+                </button>
+            </div>
         </nav>
     </header>
 
@@ -27,11 +42,14 @@
             <p>Locate active, student-operated print services on campus to fulfill your assignments instantly.</p>
         </section>
 
-        <!-- Dynamic Container -->
         <section class="printers-grid" id="printing-grid">
             <p style="text-align: center; padding: 2rem; width: 100%;">Loading printer stations...</p>
         </section>
     </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2026 Domasi Hub. An Independent Student Innovation.</p>
+    </footer>
 
     <script src="printing.js"></script>
     <script src="theme.js"></script>
