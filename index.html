@@ -5,17 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Domasi Hub | Campus Utility Platform</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%230066FF'/><stop offset='100%' stop-color='%2300D4FF'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='%230F172A'/><path d='M 12 6 C 22 6 26 11 26 16 C 26 21 22 26 12 26 L 7 26 L 7 6 Z' fill='none' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/><line x1='7' y1='16' x2='18' y2='16' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round'/><circle cx='18' cy='16' r='2.5' fill='%2300D4FF'/></svg>" />
 </head>
 <body>
 
     <header class="main-header">
-        <div class="logo">
-            <h1>
-                <a href="index.html" style="text-decoration: none;">
-                    <img src="Logo.svg" alt="Domasi Hub Logo" style="height:48px;">
-                </a>
-            </h1>
-        </div>
+       <div class="logo">
+    <h1>
+        <a href="index.html" class="logo-link" aria-label="Domasi Hub Homepage">
+            <img src="Logo.svg" alt="Domasi Hub Logo" class="header-logo-img">
+        </a>
+    </h1>
+</div>
         <nav class="main-nav">
             <!-- Dynamic Auth Links Container -->
             <div id="authNavContainer" style="display: flex; gap: 0.75rem; align-items: center;">
@@ -59,7 +60,7 @@
                     <input 
                         type="text" 
                         id="heroSearchInput" 
-                        placeholder="Search modules, print stations or accommodations..." 
+                        placeholder="Search items, print stations or accommodations..." 
                         aria-label="Search listings"
                     >
                     <button id="heroSearchBtn" class="hero-search-btn" aria-label="Search">

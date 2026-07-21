@@ -73,7 +73,7 @@ p {
 }
 
 /* ==========================================================================
-   2. HEADER, NAVIGATION & THEME SWITCH
+   2. HEADER, NAVIGATION & RESPONSIVE LOGO
    ========================================================================== */
 .main-header {
     background-color: var(--glass-bg);
@@ -90,6 +90,24 @@ p {
     width: 100%;
     border-bottom: 1px solid var(--border-subtle);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.header-logo-img {
+    height: 42px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    transition: height 0.25s ease, transform 0.2s ease;
+}
+
+.header-logo-img:hover {
+    transform: scale(1.02);
 }
 
 .main-nav {
@@ -481,11 +499,27 @@ input:focus, select:focus, textarea:focus {
     .services-grid, .products-grid, .printers-grid, .rooms-grid, .featured-grid { 
         grid-template-columns: repeat(2, 1fr); 
     }
+    
+    .header-logo-img {
+        height: 52px;
+    }
 }
 
 @media (min-width: 1024px) {
     .services-grid, .products-grid, .printers-grid, .rooms-grid, .featured-grid { 
         grid-template-columns: repeat(3, 1fr); 
+    }
+}
+
+@media (min-width: 1200px) {
+    .header-logo-img {
+        height: 58px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-logo-img {
+        height: 36px;
     }
 }
 
