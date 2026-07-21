@@ -145,27 +145,50 @@
   </main>
 
   <script>
-    // Authorized admin usernames
-    const authorizedAdmins = ['eden', 'msosa', 'craig'];
-
     document.addEventListener("DOMContentLoaded", () => {
       checkAdminAccess();
     });
 
-    function checkAdminAccess() {
-      let currentUser = (localStorage.getItem('username') || '').toLowerCase().trim();
-      let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    async function checkAdminAccess() {
+      let currentUser = (localStorage.getItem('adminUsername') || '').toLowerCase().trim();
+      let isLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
 
-      // If not logged in or user not authorized, prompt for admin username
-      if (!isLoggedIn || !authorizedAdmins.includes(currentUser)) {
-        const inputUser = prompt("Admin Login Required. Enter your admin handle (eden, msosa, craig):");
-        
-        if (inputUser && authorizedAdmins.includes(inputUser.toLowerCase().trim())) {
-          currentUser = inputUser.toLowerCase().trim();
-          localStorage.setItem('username', currentUser);
-          localStorage.setItem('isLoggedIn', 'true');
-        } else {
-          alert("Access Denied: Invalid Admin Handle.");
+      if (!isLoggedIn) {
+        const inputUser = prompt("Admin Username:");
+        if (!inputUser) { window.location.href = "index.html"; return; }
+
+        const inputPass = prompt("Admin Password:");
+        if (!inputPass) { window.location.href = "index.html"; return; }
+
+        try {
+          const res = await fetch('http://127.0.0.1:3000/api/admin/signin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: inputUser, password: inputPass })
+          });
+
+          // Check content type to prevent JSON parse crashes on HTML responses
+          const contentType = res.headers.get("content-type");
+          if (!contentType || !contentType.includes("application/json")) {
+            alert("Server returned non-JSON response. Check if backend Node server is active.");
+            window.location.href = "index.html";
+            return;
+          }
+
+          const data = await res.json();
+
+          if (res.ok && data.status === 'success') {
+            localStorage.setItem('adminUsername', data.username);
+            localStorage.setItem('isAdminLoggedIn', 'true');
+            currentUser = data.username;
+          } else {
+            alert("Access Denied: " + (data.message || "Invalid Admin Credentials"));
+            window.location.href = "index.html";
+            return;
+          }
+        } catch (err) {
+          console.error("Auth error:", err);
+          alert("Error connecting to auth server.");
           window.location.href = "index.html";
           return;
         }
@@ -262,8 +285,8 @@
     }
 
     function logout() {
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('username');
+      localStorage.removeItem('isAdminLoggedIn');
+      localStorage.removeItem('adminUsername');
       window.location.href = "index.html";
     }
   </script>

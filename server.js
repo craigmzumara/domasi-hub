@@ -1,3 +1,5 @@
+require('dotenv').config(); // Load environment variables from .env file
+
 const express = require('express');
 const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
@@ -5,13 +7,12 @@ const bcrypt = require('bcrypt');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Middleware (with high limit size for Base64 image transfers)
+// Middleware
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
-app.use(express.static(path.join(__dirname)));
 
 // Initialize SQLite Database
 const db = new sqlite3.Database(path.join(__dirname, 'domasi_hub.db'), (err) => {
@@ -60,7 +61,6 @@ function createTables() {
 app.post('/api/auth/signup', async (req, res) => {
     const { fullname, regNumber, whatsapp, password } = req.body;
 
-    // Strict regex validation matching frontend gatekeeper
     const regPattern = /^BED\/(SCI|HUM|SSC|LAC)(?:\/ODEL)?\/\d{3,4}\/\d{2}$/i;
     if (!regPattern.test(regNumber)) {
         return res.status(400).json({ status: "error", message: "Invalid registration format." });
@@ -128,11 +128,44 @@ app.post('/api/auth/signin', (req, res) => {
     });
 });
 
+// 3. ADMIN SIGN IN (POST http://localhost:3000/api/admin/signin)
+app.post('/api/admin/signin', (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ status: "error", message: "Username and password required." });
+    }
+
+    const cleanUser = username.toLowerCase().trim();
+
+    // Environment map for co-founder passwords
+    const adminPasswords = {
+        craig: process.env.ADMIN_CRAIG_PASS,
+        eden: process.env.ADMIN_EDEN_PASS,
+        msosa: process.env.ADMIN_MSOSA_PASS
+    };
+
+    const storedPassword = adminPasswords[cleanUser];
+
+    if (storedPassword && password === storedPassword) {
+        return res.status(200).json({
+            status: "success",
+            message: "Admin authenticated successfully!",
+            username: cleanUser
+        });
+    } else {
+        return res.status(401).json({
+            status: "error",
+            message: "Invalid admin username or password."
+        });
+    }
+});
+
 /* ==========================================
    MARKETPLACE & LISTINGS ENDPOINTS
    ========================================== */
 
-// 3. POST NEW LISTING (POST http://localhost:3000/api/listings)
+// 4. POST NEW LISTING
 app.post('/api/listings', (req, res) => {
     const { title, category, price, contact_number, item_condition, security_condition, location_details, image_path } = req.body;
 
@@ -150,7 +183,7 @@ app.post('/api/listings', (req, res) => {
     });
 });
 
-// 4. GET LISTINGS (Returns category specific OR all listings for Admin Dashboard)
+// 5. GET LISTINGS
 app.get('/api/listings', (req, res) => {
     const { category } = req.query;
 
@@ -173,7 +206,7 @@ app.get('/api/listings', (req, res) => {
     });
 });
 
-// 5. DELETE A LISTING (DELETE http://localhost:3000/api/listings/:id)
+// 6. DELETE A LISTING
 app.delete('/api/listings/:id', (req, res) => {
     const { id } = req.params;
     const sql = `DELETE FROM listings WHERE id = ?`;
@@ -186,7 +219,7 @@ app.delete('/api/listings/:id', (req, res) => {
     });
 });
 
-// 6. EDIT A LISTING (PUT http://localhost:3000/api/listings/:id)
+// 7. EDIT A LISTING
 app.put('/api/listings/:id', (req, res) => {
     const { id } = req.params;
     const { title, price } = req.body;
@@ -201,7 +234,13 @@ app.put('/api/listings/:id', (req, res) => {
     });
 });
 
-// Start the application server
-app.listen(PORT, () => {
+/* ==========================================
+   STATIC FILES & SERVER START
+   ========================================== */
+
+// Serve static files AFTER defining API routes to avoid catching API 404s as HTML
+app.use(express.static(path.join(__dirname)));
+
+app.listen(PORT, '127.0.0.1', () => {
     console.log(`Backend server is running on http://127.0.0.1:${PORT}`);
 });
