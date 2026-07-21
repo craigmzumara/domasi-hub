@@ -25,7 +25,7 @@ A modern, mobile-responsive campus utility platform designed for students.
 ## 👥 The Core Team
 *   **Craig Mzumara**: Co-Founder & Lead Frontend Engineer
 *   **Eden Nyirenda**: Co-Founder & Lead Backend Engineer
-*   **Madalitso Msosa**: Lead QA Engineer & Product Owner
+*   **Madalitso Msosa**:Co-Founder & Lead QA Engineer, Product Owner
 
 ---
 
