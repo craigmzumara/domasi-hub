@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const passwordInput = document.getElementById('password');
     const signInForm = document.getElementById('signInForm');
 
-    // Silent Gatekeeper Validation (Triggers only when clicking away)
     regInput.addEventListener('blur', () => {
         const value = regInput.value.trim();
         const regPattern = /^BED\/(SCI|HUM|SSC|LAC)(?:\/ODEL)?\/\d{3,4}\/\d{2}$/i;
@@ -25,13 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Clear error UI styling when the user focuses back on the input field
     regInput.addEventListener('focus', () => {
         regInput.className = "";
         regFeedback.textContent = "";
     });
 
-    // Intercept form submission & Send to Node/Express
     signInForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -48,8 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             password: passwordInput.value
         };
 
-        // Dispatched to Node.js sign-in service
-        fetch('http://localhost:3000/api/auth/signin', {
+        fetch('http://127.0.0.1:3000/api/auth/signin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -57,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             if (data.status === "success") {
+                // Store user's actual registered name
                 localStorage.setItem('user_name', data.user.fullname);
                 localStorage.setItem('user_reg', data.user.regNumber);
                 localStorage.setItem('isLoggedIn', 'true');
