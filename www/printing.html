@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Printing Hub | Domasi Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo">
+            <h1>
+                <a href="index.html" style="text-decoration: none;">
+                    <img src="Logo.svg" alt="Domasi Hub Logo" style="height:50px;">
+                </a>
+            </h1>
+        </div>
+        <nav class="main-nav">
+            <!-- Managed Dynamically by printing.js -->
+            <div id="portalNavWrapper"></div>
+        </nav>
+    </header>
+
+    <main class="printing-container">
+        <section class="section-title">
+            <h3>Student Printing Hub</h3>
+            <p>Locate active, student-operated print services on campus to fulfill your assignments instantly.</p>
+        </section>
+
+        <!-- Dynamic Container -->
+        <section class="printers-grid" id="printing-grid">
+            <p style="text-align: center; padding: 2rem; width: 100%;">Loading printer stations...</p>
+        </section>
+    </main>
+
+    <script src="printing.js"></script>
+    <script src="theme.js"></script>
+</body>
+</html>

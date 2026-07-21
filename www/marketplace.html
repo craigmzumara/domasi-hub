@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Marketplace | Domasi Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo">
+            <h1>
+                <a href="index.html" style="text-decoration: none;">
+                    <img src="Logo.svg" alt="Domasi Hub Logo" style="height:50px;">
+                </a>
+            </h1>
+        </div>
+        <nav class="main-nav">
+            <!-- Managed Dynamically by marketplace.js -->
+            <div id="portalNavWrapper"></div>
+        </nav>
+    </header>
+
+    <main class="marketplace-container">
+        <section class="section-title">
+            <h3>Campus Marketplace</h3>
+            <p>Buy or sell academic essentials directly via WhatsApp.</p>
+        </section>
+
+        <!-- Dynamic Container -->
+        <section class="products-grid" id="marketplace-grid">
+            <p style="text-align: center; padding: 2rem; width: 100%;">Loading items...</p>
+        </section>
+    </main>
+
+    <script src="marketplace.js"></script>
+    <script src="theme.js"></script>
+</body>
+</html>

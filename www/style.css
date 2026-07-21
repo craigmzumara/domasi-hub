@@ -510,3 +510,16 @@ input[type="file"].image-upload-input {
     background-color: #0056b3 !important; /* Slightly darker blue on hover */
     box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
 }
+<!--dashboard-->
+.btn-nav-dashboard {
+  background: var(--primary-color);
+  color: #fff;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+}
+
+.btn-nav-dashboard:hover {
+  background: #0056b3; /* darker shade */
+}

@@ -1,3 +1,16 @@
-domasi_hub.db
-*.db
+# Dependencies
 node_modules/
+
+# Local Databases & Backups
+database.sqlite
+domasi_hub
+domasi_hub_backup
+*.db
+*.sqlite
+
+# Local Uploads
+uploads/
+
+# OS/Editor junk
+.DS_Store
+Thumbs.db
