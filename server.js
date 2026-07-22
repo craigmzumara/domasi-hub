@@ -324,7 +324,7 @@ app.post('/api/academics', (req, res) => {
         VALUES (?, ?, ?, ?, ?, ?)
     `;
 
-    db.run(sql, [title, department, academic_year || '', course_code || '', file_data, uploaded_by || "Anonymous"], function (err) {
+    db.run(sql, [title, department, academic_year || '', course_code || '', file_data, uploaded_by || "Anonymous Student"], function (err) {
         if (err) {
             console.error("Database insert error:", err.message);
             return res.status(500).json({ status: "error", message: err.message });
@@ -340,6 +340,18 @@ app.get('/api/academics/download/:id', (req, res) => {
 
         db.run("UPDATE academic_resources SET download_count = download_count + 1 WHERE id = ?", [id]);
         res.json({ status: "success", file_data: row.file_data });
+    });
+});
+
+app.delete('/api/academics/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = `DELETE FROM academic_resources WHERE id = ?`;
+
+    db.run(sql, [id], function (err) {
+        if (err) {
+            return res.status(500).json({ status: "error", error: err.message });
+        }
+        res.status(200).json({ status: "success", message: "Academic resource deleted successfully." });
     });
 });
 

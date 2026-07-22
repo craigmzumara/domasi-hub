@@ -44,7 +44,7 @@
 
     <main style="padding-bottom: 3rem;">
         <!-- 1. Hero Section & Integrated Search -->
-        <section class="section-title" style="text-align: center; margin-bottom: 2.5rem; margin-top: 1.5rem;">
+        <section class="section-title" style="text-align: center; margin-bottom: 2rem; margin-top: 1.5rem;">
             <h2>Welcome to Domasi Hub</h2>
             <p style="font-size: 1.15rem; max-width: 620px; margin: 0.5rem auto 1rem auto;">
                 Your all-in-one student utility companion platform for campus life.
@@ -78,68 +78,11 @@
             </div>
         </section>
 
-        <!-- 2. SPOTLIGHT LOCATION: DEDICATED ACADEMIC VAULT WINDOW -->
-        <section class="academic-display-window" style="margin-bottom: 3.5rem;">
-            <div class="academic-window-glow"></div>
-            
-            <div class="academic-window-content">
-                <div class="academic-window-badge">
-                    <span class="badge-dot"></span> Academic Vault & Resources
-                </div>
-                <h2>Explore Past Papers & Lecture Modules</h2>
-                <p>
-                    Access course guides, exam preparation revision packs, end-of-semester papers, and lecture slides shared across departments.
-                </p>
-
-                <div class="academic-feature-tags">
-                    <span class="feature-pill">📄 PDF Downloads</span>
-                    <span class="feature-pill">⚡ Instant Access</span>
-                    <span class="feature-pill">🎓 Department Filters</span>
-                </div>
-
-                <div class="academic-cta-group">
-                    <a href="academics.html" class="btn-academic-launch">
-                        <span>Access Academic Repository</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Right Side Preview Window -->
-            <div class="academic-window-preview">
-                <div class="preview-header">
-                    <span class="dot red"></span>
-                    <span class="dot yellow"></span>
-                    <span class="dot green"></span>
-                    <span class="preview-title">academics_vault.pdf</span>
-                </div>
-                <div class="preview-body">
-                    <div class="preview-row">
-                        <span class="file-icon">📚</span>
-                        <div class="file-info">
-                            <strong>Education Psychology Module 1</strong>
-                            <small>Updated 2026 • BED/HUM</small>
-                        </div>
-                    </div>
-                    <div class="preview-row">
-                        <span class="file-icon">📝</span>
-                        <div class="file-info">
-                            <strong>Computer Science End Sem Exam</strong>
-                            <small>Past Paper • BED/SCI</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 3. Featured / Search Results Section -->
+        <!-- 2. DIRECT SEARCH RESULTS / FEATURED HIGHLIGHTS (Positioned directly under search) -->
         <section style="margin-bottom: 3.5rem;">
             <div class="section-title" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 0.5rem;">
                 <div>
-                    <h3 id="featuredTitle" style="font-size: 2rem;">Featured Highlights</h3>
+                    <h3 id="featuredTitle" style="font-size: 1.8rem;">Featured Highlights</h3>
                     <p id="featuredSubtitle">Trending listings and active services available today.</p>
                 </div>
                 <button id="clearSearchBtn" class="btn-secondary" style="display: none; font-size: 0.85rem; padding: 0.4rem 0.8rem; cursor: pointer;">
@@ -149,6 +92,53 @@
 
             <div id="featured-grid" class="featured-grid">
                 <p style="grid-column: 1/-1; text-align: center; padding: 2rem;">Loading uploads...</p>
+            </div>
+        </section>
+
+        <!-- 3. SPOTLIGHT LOCATION: DEDICATED ACADEMIC VAULT WINDOW -->
+        <section class="academic-display-window" style="margin-bottom: 3.5rem;">
+            <div class="academic-window-glow"></div>
+            
+            <div class="academic-window-content">
+                <div class="academic-window-badge">
+                    <span class="badge-dot"></span> Academic Vault & Resources (<span id="academicUploadsCount">0</span> Uploads)
+                </div>
+                <h2>Explore Past Papers & Lecture Modules</h2>
+                <p>
+                    Access course guides, exam preparation revision packs, end-of-semester papers, and lecture slides shared across departments.
+                </p>
+
+                <div class="academic-feature-tags">
+                    <span class="feature-pill" style="cursor: pointer;" onclick="filterAcademicVault('Sciences')">🔬 Sciences</span>
+                    <span class="feature-pill" style="cursor: pointer;" onclick="filterAcademicVault('Humanities')">📖 Humanities</span>
+                    <span class="feature-pill" style="cursor: pointer;" onclick="filterAcademicVault('Social Sciences')">🌍 Social Sciences</span>
+                    <span class="feature-pill" style="cursor: pointer;" onclick="filterAcademicVault('Languages & Communication')">🗣️ Languages</span>
+                </div>
+
+                <div class="academic-cta-group">
+                    <a href="academics.html" class="btn-academic-launch">
+                        <span>Open Full Academic Repository</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Side Live Academic Vault Items -->
+            <div class="academic-window-preview" style="width: 360px;">
+                <div class="preview-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span class="preview-title" id="vaultHeaderTitle">recent_academic_uploads</span>
+                </div>
+                <div class="preview-body" id="academicVaultContainer">
+                    <p style="text-align: center; color: #94a3b8; font-size: 0.85rem; padding: 1rem;">
+                        Fetching live academic resources...
+                    </p>
+                </div>
             </div>
         </section>
 

@@ -187,6 +187,11 @@ async function handleUploadSubmit(e) {
         return;
     }
 
+    // Retrieve registration number if present to attach to the uploader string
+    const regNumber = localStorage.getItem('user_reg') || localStorage.getItem('regNumber') || '';
+    const rawName = user.fullname || user.user_fullname;
+    const formattedUploader = regNumber ? `${rawName} (${regNumber})` : rawName;
+
     const title = document.getElementById("resourceTitle").value.trim();
     const department = document.getElementById("resourceDept").value;
     const academic_year = document.getElementById("resourceYear").value.trim();
@@ -213,7 +218,7 @@ async function handleUploadSubmit(e) {
             academic_year,
             course_code,
             file_data: base64File,
-            uploaded_by: user.fullname || user.user_fullname
+            uploaded_by: formattedUploader
         };
 
         const response = await fetch("http://127.0.0.1:3000/api/academics", {

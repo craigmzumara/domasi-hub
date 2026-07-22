@@ -1,11 +1,13 @@
 let allListings = [];
+let allAcademicResources = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     // 1. Auth Navigation UI Setup
     setupAuthNav();
 
-    // 2. Load Dynamic Featured Listings & Live Category Counts
+    // 2. Load Homepage Data (Listings + Academic Resources)
     loadHomepageData();
+    fetchAcademicVaultResources();
 
     // 3. Search Bar Event Listeners
     const searchBtn = document.getElementById("heroSearchBtn");
@@ -22,7 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (clearBtn) {
         clearBtn.addEventListener("click", () => {
             if (searchInput) searchInput.value = "";
-            renderListings(allListings.slice(0, 3), false);
+            renderSearchResults(allListings.slice(0, 3), [], false);
+            renderAcademicVault(allAcademicResources.slice(0, 3));
         });
     }
 });
@@ -99,14 +102,14 @@ async function loadHomepageData() {
             const marketCount = allListings.filter(item => item.category === "marketplace").length;
             const printCount = allListings.filter(item => item.category === "printing").length;
             const roomCount = allListings.filter(item => item.category === "accommodation").length;
-            const totalCount = allListings.length;
+            
+            updateTotalActiveCounter();
 
             if (document.getElementById("marketplaceCount")) document.getElementById("marketplaceCount").textContent = formatCount(marketCount, "item", "items");
             if (document.getElementById("printingCount")) document.getElementById("printingCount").textContent = formatCount(printCount, "station", "stations");
             if (document.getElementById("accommodationCount")) document.getElementById("accommodationCount").textContent = formatCount(roomCount, "unit", "units");
-            if (document.getElementById("totalActiveCount")) document.getElementById("totalActiveCount").textContent = `${totalCount} Total Live Listings`;
 
-            renderListings(allListings.slice(0, 3), false);
+            renderSearchResults(allListings.slice(0, 3), [], false);
         }
     } catch (error) {
         console.error("Failed to load portal data for home page:", error);
@@ -116,18 +119,126 @@ async function loadHomepageData() {
     }
 }
 
+async function fetchAcademicVaultResources() {
+    const container = document.getElementById("academicVaultContainer");
+    const uploadsCount = document.getElementById("academicUploadsCount");
+
+    try {
+        const response = await fetch("http://127.0.0.1:3000/api/academics");
+        const data = await response.json();
+
+        if (data.status === "success" && data.resources) {
+            allAcademicResources = data.resources;
+
+            if (uploadsCount) {
+                uploadsCount.textContent = allAcademicResources.length;
+            }
+
+            updateTotalActiveCounter();
+            renderAcademicVault(allAcademicResources.slice(0, 3));
+        } else if (container) {
+            container.innerHTML = `<p style="text-align: center; color: #94a3b8; font-size: 0.85rem; padding: 1rem;">No academic files available yet.</p>`;
+        }
+    } catch (err) {
+        console.error("Failed to fetch academic vault resources:", err);
+        if (container) {
+            container.innerHTML = `<p style="text-align: center; color: #ef4444; font-size: 0.85rem; padding: 1rem;">Failed to connect to academic repository.</p>`;
+        }
+    }
+}
+
+function renderAcademicVault(resources) {
+    const container = document.getElementById("academicVaultContainer");
+    if (!container) return;
+
+    if (!resources || resources.length === 0) {
+        container.innerHTML = `<p style="text-align: center; color: #94a3b8; font-size: 0.85rem; padding: 1rem;">No matching study materials found.</p>`;
+        return;
+    }
+
+    container.innerHTML = "";
+    resources.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "preview-row";
+        row.style.cursor = "pointer";
+        row.style.transition = "background 0.2s ease";
+        row.title = "Click to download resource";
+
+        const courseCode = item.course_code ? ` • ${item.course_code.toUpperCase()}` : "";
+        const uploader = item.uploaded_by || "Anonymous";
+
+        row.innerHTML = `
+            <span class="file-icon">📚</span>
+            <div class="file-info" style="flex: 1; overflow: hidden;">
+                <strong style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">${escapeHTML(item.title)}</strong>
+                <small>${escapeHTML(item.department)}${escapeHTML(courseCode)} | By ${escapeHTML(uploader)}</small>
+            </div>
+            <button onclick="downloadAcademicFile(${item.id}, '${escapeHTML(item.title)}')" class="btn-primary" style="padding: 0.35rem 0.65rem; font-size: 0.75rem; border-radius: 8px; flex-shrink: 0;">
+                📥
+            </button>
+        `;
+
+        row.addEventListener("mouseover", () => row.style.background = "rgba(255, 255, 255, 0.1)");
+        row.addEventListener("mouseout", () => row.style.background = "rgba(255, 255, 255, 0.04)");
+
+        container.appendChild(row);
+    });
+}
+
+function filterAcademicVault(department) {
+    const headerTitle = document.getElementById("vaultHeaderTitle");
+    if (headerTitle) headerTitle.textContent = department.toLowerCase().replace(/\s+/g, '_');
+
+    const filtered = allAcademicResources.filter(item => item.department === department);
+    renderAcademicVault(filtered.slice(0, 3));
+}
+
+async function downloadAcademicFile(id, filename) {
+    try {
+        const response = await fetch(`http://127.0.0.1:3000/api/academics/download/${id}`);
+        if (!response.ok) throw new Error("Download endpoint returned error");
+
+        const data = await response.json();
+
+        if (data.status === "success" && data.file_data) {
+            const a = document.createElement("a");
+            a.href = data.file_data;
+            a.download = filename || "academic_document";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            alert("Failed to download file.");
+        }
+    } catch (err) {
+        console.error("Download error:", err);
+        alert("Error connecting to server for download.");
+    }
+}
+
+function updateTotalActiveCounter() {
+    const totalActiveElem = document.getElementById("totalActiveCount");
+    if (totalActiveElem) {
+        const combinedCount = allListings.length + allAcademicResources.length;
+        totalActiveElem.textContent = `${combinedCount} Total Live Resources & Listings`;
+    }
+}
+
 function handleSearch() {
     const searchInput = document.getElementById("heroSearchInput");
     if (!searchInput) return;
 
-    const query = searchInput.value.trim().toLowerCase();
+    const rawQuery = searchInput.value.trim();
+    const query = rawQuery.toLowerCase();
 
     if (!query) {
-        renderListings(allListings.slice(0, 3), false);
+        renderSearchResults(allListings.slice(0, 3), [], false);
+        renderAcademicVault(allAcademicResources.slice(0, 3));
         return;
     }
 
-    const filtered = allListings.filter(item => {
+    // 1. Search General Campus Listings
+    const filteredListings = allListings.filter(item => {
         const titleMatch = (item.title || "").toLowerCase().includes(query);
         const locationMatch = (item.location_details || "").toLowerCase().includes(query);
         const conditionMatch = (item.item_condition || item.security_condition || "").toLowerCase().includes(query);
@@ -136,10 +247,26 @@ function handleSearch() {
         return titleMatch || locationMatch || conditionMatch || categoryMatch;
     });
 
-    renderListings(filtered, true, query);
+    // 2. Search Academic Resources (by title, department, or course code)
+    const queryNoSpaces = query.replace(/\s+/g, '');
+    const filteredAcademics = allAcademicResources.filter(item => {
+        const titleMatch = (item.title || "").toLowerCase().includes(query);
+        const deptMatch = (item.department || "").toLowerCase().includes(query);
+        
+        const rawCode = (item.course_code || "").toLowerCase();
+        const codeMatch = rawCode.includes(query) || rawCode.replace(/\s+/g, '').includes(queryNoSpaces);
+
+        return titleMatch || deptMatch || codeMatch;
+    });
+
+    // Render combined results in the main search grid
+    renderSearchResults(filteredListings, filteredAcademics, true, rawQuery);
+
+    // Also update the sidebar academic vault widget
+    renderAcademicVault(filteredAcademics.slice(0, 3));
 }
 
-function renderListings(items, isSearchResult = false, query = "") {
+function renderSearchResults(listingsItems = [], academicItems = [], isSearchResult = false, query = "") {
     const featuredGrid = document.getElementById("featured-grid");
     const featuredTitle = document.getElementById("featuredTitle");
     const featuredSubtitle = document.getElementById("featuredSubtitle");
@@ -147,9 +274,11 @@ function renderListings(items, isSearchResult = false, query = "") {
 
     if (!featuredGrid) return;
 
+    const totalResultsCount = listingsItems.length + academicItems.length;
+
     if (isSearchResult) {
-        if (featuredTitle) featuredTitle.textContent = `Search Results (${items.length})`;
-        if (featuredSubtitle) featuredSubtitle.textContent = `Listings matching "${query}"`;
+        if (featuredTitle) featuredTitle.textContent = `Search Results (${totalResultsCount})`;
+        if (featuredSubtitle) featuredSubtitle.textContent = `Results matching "${query}"`;
         if (clearBtn) clearBtn.style.display = "inline-block";
     } else {
         if (featuredTitle) featuredTitle.textContent = "Featured Highlights";
@@ -157,9 +286,43 @@ function renderListings(items, isSearchResult = false, query = "") {
         if (clearBtn) clearBtn.style.display = "none";
     }
 
-    if (items.length > 0) {
+    if (totalResultsCount > 0) {
         featuredGrid.innerHTML = "";
-        items.forEach(item => {
+
+        // Render Academic Resources matched in Search
+        academicItems.forEach(item => {
+            const card = document.createElement("div");
+            card.className = "module-card";
+            card.style.borderColor = "rgba(16, 185, 129, 0.4)"; // Subtle green tint for academic cards
+
+            const courseCode = item.course_code ? item.course_code.toUpperCase() : "MODULE";
+            const uploader = item.uploaded_by || "Anonymous";
+
+            card.innerHTML = `
+                <div>
+                    <span class="featured-badge" style="background: linear-gradient(135deg, #10b981, #059669); display:inline-block; margin-bottom: 0.5rem;">
+                        📚 Academic Resource
+                    </span>
+                    <h4 style="margin: 0 0 0.5rem 0;">${escapeHTML(item.title)}</h4>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.08); border-radius: 8px; border: 1px dashed rgba(16, 185, 129, 0.3); padding: 1.2rem; text-align: center;">
+                    <div style="font-size: 2.2rem; margin-bottom: 0.2rem;">📄</div>
+                    <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-core);">${escapeHTML(courseCode)}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">${escapeHTML(item.department)}</div>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                    Uploaded by: <strong>${escapeHTML(uploader)}</strong>
+                </p>
+                <button onclick="downloadAcademicFile(${item.id}, '${escapeHTML(item.title)}')" class="btn-primary" style="background: linear-gradient(135deg, #10b981, #059669); text-align: center; margin-top: auto; border: none;">
+                    📥 Download Paper / Resource
+                </button>
+            `;
+
+            featuredGrid.appendChild(card);
+        });
+
+        // Render General Campus Listings
+        listingsItems.forEach(item => {
             const card = document.createElement("div");
             card.className = "module-card";
 
@@ -201,8 +364,9 @@ function renderListings(items, isSearchResult = false, query = "") {
 
             featuredGrid.appendChild(card);
         });
+
     } else {
-        featuredGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">No matching listings found on the platform.</p>`;
+        featuredGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">No matching listings or academic resources found on the platform.</p>`;
     }
 }
 
