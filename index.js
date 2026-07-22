@@ -63,15 +63,19 @@ async function loadHomepageData() {
         if (data.status === "success" && data.listings) {
             allListings = data.listings;
 
+            // Dynamic Singular / Plural Formatter
+            const formatCount = (count, singular, plural) => 
+                `${count} ${count === 1 ? singular : plural}`;
+
             // Update Live Category Counts
             const marketCount = allListings.filter(item => item.category === "marketplace").length;
             const printCount = allListings.filter(item => item.category === "printing").length;
             const roomCount = allListings.filter(item => item.category === "accommodation").length;
             const totalCount = allListings.length;
 
-            document.getElementById("marketplaceCount").textContent = `${marketCount} items`;
-            document.getElementById("printingCount").textContent = `${printCount} stations`;
-            document.getElementById("accommodationCount").textContent = `${roomCount} units`;
+            document.getElementById("marketplaceCount").textContent = formatCount(marketCount, "item", "items");
+            document.getElementById("printingCount").textContent = formatCount(printCount, "station", "stations");
+            document.getElementById("accommodationCount").textContent = formatCount(roomCount, "unit", "units");
             document.getElementById("totalActiveCount").textContent = `${totalCount} Total Live Listings`;
 
             // Display default featured items (Latest 3 uploads)
@@ -132,7 +136,8 @@ function renderListings(items, isSearchResult = false, query = "") {
             const card = document.createElement("div");
             card.className = "module-card";
 
-            const priceFormatted = parseFloat(item.price || 0).toLocaleString() + " MWK";
+            // Currency placed before figure
+            const priceFormatted = "MWK " + parseFloat(item.price || 0).toLocaleString();
             const imageSrc = item.image_path || "https://via.placeholder.com/300x200?text=No+Image";
 
             let badgeText = "New Upload";
@@ -155,11 +160,13 @@ function renderListings(items, isSearchResult = false, query = "") {
 
             card.innerHTML = `
                 <div>
-                    <span class="featured-badge">${badgeText}</span>
-                    <h4 style="margin-top: 0.25rem;">${item.title || 'Untitled Listing'}</h4>
+                    <span class="featured-badge" style="display:inline-block; margin-bottom: 0.5rem;">${badgeText}</span>
+                    <h4 style="margin: 0 0 0.5rem 0;">${item.title || 'Untitled Listing'}</h4>
                 </div>
-                <img src="${imageSrc}" alt="${item.title || 'Listing'}" style="width:100%; height:160px; object-fit:cover; border-radius:8px; margin: 0.5rem 0;">
-                <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                <div style="background: rgba(0, 0, 0, 0.03); border-radius: 8px; border: 1px solid var(--border-subtle); overflow: hidden; padding: 4px;">
+                    <img src="${imageSrc}" alt="${item.title || 'Listing'}" style="width:100%; height:160px; object-fit:contain; border-radius:6px; display:block;">
+                </div>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.5rem;">
                     ${item.location_details || item.security_condition || item.item_condition || 'Active on Domasi Hub'}
                 </p>
                 <div style="font-weight: 700; color: var(--primary-color); font-size: 1.1rem; margin-top: auto;">${priceFormatted}</div>
