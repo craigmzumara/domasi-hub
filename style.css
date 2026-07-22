@@ -72,6 +72,23 @@ p {
     color: var(--text-secondary);
 }
 
+/* High-Contrast Dynamic User Display for Header Navigation */
+.user-greeting {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #f8fafc !important; /* Fixed bright color unaffected by theme background flips */
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    padding: 0.4rem 0.85rem;
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
 /* ==========================================================================
    2. HEADER, NAVIGATION & RESPONSIVE LOGO
    ========================================================================== */
@@ -197,7 +214,7 @@ body.dark-theme .moon-icon {
 }
 
 /* ==========================================================================
-   3. MODERN HERO SEARCH BAR BAR UI
+   3. MODERN HERO SEARCH BAR UI
    ========================================================================== */
 .hero-search-wrapper {
     max-width: 620px;
@@ -592,4 +609,336 @@ input:focus, select:focus, textarea:focus {
         height: 320%;
         opacity: 0;
     }
+}
+
+/* ==========================================================================
+   BOTTOM ACADEMIC DISPLAY WINDOW STYLES
+   ========================================================================== */
+.academic-display-window {
+    background: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #0f172a 100%);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    border-radius: 24px;
+    padding: 3.5rem 3rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2.5rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.academic-window-glow {
+    position: absolute;
+    top: -30%;
+    left: -10%;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.academic-window-content {
+    max-width: 580px;
+    position: relative;
+    z-index: 2;
+}
+
+.academic-window-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(16, 185, 129, 0.18);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #6ee7b7;
+    padding: 0.35rem 0.85rem;
+    border-radius: 30px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.25rem;
+}
+
+.badge-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #10b981;
+}
+
+.academic-window-content h2 {
+    color: #ffffff;
+    font-size: 2.25rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    font-weight: 800;
+}
+
+.academic-window-content p {
+    color: #a7f3d0;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
+
+.academic-feature-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+}
+
+.feature-pill {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #e2e8f0;
+    padding: 0.4rem 0.85rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.btn-academic-launch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding: 1rem 2rem;
+    border-radius: 14px;
+    text-decoration: none;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-academic-launch svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.2s ease;
+}
+
+.btn-academic-launch:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(16, 185, 129, 0.5);
+}
+
+.btn-academic-launch:hover svg {
+    transform: translateX(4px);
+}
+
+/* UI Preview Mockup Card on the Right */
+.academic-window-preview {
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    width: 320px;
+    flex-shrink: 0;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 2;
+}
+
+.preview-header {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.preview-header .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.preview-header .red { background: #ef4444; }
+.preview-header .yellow { background: #f59e0b; }
+.preview-header .green { background: #10b981; }
+
+.preview-title {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-left: auto;
+    font-family: monospace;
+}
+
+.preview-body {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.preview-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 0.75rem;
+    border-radius: 10px;
+}
+
+.file-icon {
+    font-size: 1.4rem;
+}
+
+.file-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.file-info strong {
+    font-size: 0.85rem;
+    color: #f8fafc;
+}
+
+.file-info small {
+    font-size: 0.72rem;
+    color: #64748b;
+}
+
+/* Responsive breakpoint */
+@media (max-width: 960px) {
+    .academic-display-window {
+        flex-direction: column;
+        padding: 2.5rem 1.75rem;
+        text-align: center;
+    }
+
+    .academic-window-content {
+        max-width: 100%;
+    }
+
+    .academic-feature-tags {
+        justify-content: center;
+    }
+
+    .academic-window-preview {
+        width: 100%;
+        max-width: 360px;
+    }
+}
+
+/* ==========================================================================
+   POP-UP MODAL & TOAST NOTIFICATION SYSTEM
+   ========================================================================== */
+.popup-modal-card {
+    max-width: 380px !important;
+    width: 90% !important;
+    text-align: center;
+    align-items: center;
+    animation: popupScale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.popup-icon-circle {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.35);
+}
+
+.popup-icon-circle svg {
+    width: 32px;
+    height: 32px;
+    stroke: #ffffff;
+}
+
+@keyframes popupScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Toast Container & Notification Styling */
+.toast-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    pointer-events: none;
+}
+
+.fancy-toast {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: var(--bg-surface);
+    color: var(--text-core);
+    padding: 0.85rem 1.4rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    font-weight: 600;
+    font-size: 0.92rem;
+    opacity: 0;
+    transform: translateY(15px) scale(0.95);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: auto;
+}
+
+.fancy-toast.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.fancy-toast.toast-success {
+    border-left: 4px solid #10b981;
+}
+
+.fancy-toast.toast-error {
+    border-left: 4px solid #ef4444;
+}
+
+.fancy-toast.toast-info {
+    border-left: 4px solid var(--primary-color);
+}
+
+.toast-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.toast-success .toast-icon {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.toast-error .toast-icon {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.toast-info .toast-icon {
+    background-color: rgba(37, 99, 235, 0.2);
+    color: var(--primary-color);
 }

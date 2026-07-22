@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const signUpForm = document.getElementById('signUpForm');
 
-    // 1. Silent Gatekeeper Validation (Triggers only when clicking away)
+    // 1. Validation on blur
     regInput.addEventListener('blur', () => {
         const value = regInput.value.trim();
         const regPattern = /^BED\/(SCI|HUM|SSC|LAC)(?:\/ODEL)?\/\d{3,4}\/\d{2}$/i;
@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Clear error style immediately when they click back inside to fix it
     regInput.addEventListener('focus', () => {
         regInput.className = "";
         regFeedback.textContent = "";
@@ -63,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     passwordInput.addEventListener('input', checkPasswords);
     confirmInput.addEventListener('input', checkPasswords);
 
-    // 3. Prevent Form Submission If Submitting Invalid Info & Send to SQLite Backend
+    // 3. Prevent Form Submission If Submitting Invalid Info & Send to Backend
     signUpForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -72,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const doPasswordsMatch = passwordInput.value === confirmInput.value;
 
         if (!isRegValid || !doPasswordsMatch || passwordInput.value === "" || fullNameInput.value.trim() === "") {
-            alert("Please complete the form correctly before continuing.");
+            showToast("Please complete the form correctly before continuing.", "error");
             return;
         }
 
@@ -83,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
             password: passwordInput.value
         };
 
-        // Dispatched to Node.js / Express backend
         fetch('http://localhost:3000/api/auth/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -92,19 +90,88 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             if (data.status === "success") {
+                // Uniformly populate keys
                 localStorage.setItem('user_name', payload.fullname);
+                localStorage.setItem('user_fullname', payload.fullname);
+                localStorage.setItem('fullname', payload.fullname);
                 localStorage.setItem('user_reg', payload.regNumber);
+                localStorage.setItem('user', JSON.stringify({ fullname: payload.fullname, regNumber: payload.regNumber }));
                 localStorage.setItem('isLoggedIn', 'true');
 
-                alert(data.message);
-                window.location.href = 'portal.html';
+                showSuccessModal("Account Created!", "Your registration was successful. Redirecting...", () => {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirectTarget = urlParams.get('redirect') || 'portal.html';
+                    window.location.href = redirectTarget;
+                });
             } else {
-                alert(data.message);
+                showToast(data.message || "Registration failed.", "error");
             }
         })
         .catch(err => {
             console.error("Error connecting to API layer:", err);
-            alert("Unable to reach authentication server.");
+            showToast("Unable to reach authentication server.", "error");
         });
     });
 });
+
+// Fancy Success Modal
+function showSuccessModal(title, message, callback) {
+    let overlay = document.getElementById("successModalOverlay");
+    if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "successModalOverlay";
+        overlay.className = "modal-overlay";
+        overlay.innerHTML = `
+            <div class="auth-card popup-modal-card">
+                <div class="popup-icon-circle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <h3 id="popupModalTitle" style="text-align: center; margin-top: 0.75rem;">${title}</h3>
+                <p id="popupModalMsg" style="text-align: center; color: var(--text-secondary); margin-bottom: 1.25rem;">${message}</p>
+                <button id="popupModalBtn" class="btn-primary btn-block">Continue</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    } else {
+        document.getElementById("popupModalTitle").textContent = title;
+        document.getElementById("popupModalMsg").textContent = message;
+    }
+
+    overlay.classList.add("active");
+
+    const proceed = () => {
+        overlay.classList.remove("active");
+        if (callback) callback();
+    };
+
+    document.getElementById("popupModalBtn").onclick = proceed;
+
+    setTimeout(proceed, 1800);
+}
+
+// Global Toast Notification
+function showToast(message, type = "error") {
+    let container = document.getElementById("toastContainer");
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "toastContainer";
+        container.className = "toast-container";
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement("div");
+    toast.className = `fancy-toast toast-${type}`;
+    toast.innerHTML = `
+        <span class="toast-icon">${type === "success" ? "✓" : "✕"}</span>
+        <span class="toast-message">${message}</span>
+    `;
+
+    container.appendChild(toast);
+    setTimeout(() => toast.classList.add("show"), 10);
+    setTimeout(() => {
+        toast.classList.remove("show");
+        setTimeout(() => toast.remove(), 300);
+    }, 3500);
+}

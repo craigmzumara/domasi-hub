@@ -52,13 +52,15 @@
 
     <header class="main-header">
        <div class="logo">
-    <h1>
-        <a href="index.html" class="logo-link" aria-label="Domasi Hub Homepage">
-            <img src="logo.svg" alt="Domasi Hub Logo" class="header-logo-img">
-        </a>
-    </h1>
-</div>
+            <h1>
+                <a href="index.html" class="logo-link" aria-label="Domasi Hub Homepage">
+                    <img src="logo.svg" alt="Domasi Hub Logo" class="header-logo-img">
+                </a>
+            </h1>
+        </div>
         <nav class="main-nav">
+            <!-- Dynamic Logged-in User Welcome Greeting -->
+            <span id="portalUserDisplay" class="user-greeting">👋 Campus Student</span>
             <a href="index.html" class="btn-secondary" onclick="logout()">Log Out</a>
 
             <div class="theme-switch-wrapper">
@@ -223,6 +225,18 @@
     </footer>
 
     <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const userDisplay = document.getElementById("portalUserDisplay");
+            const fullName = localStorage.getItem('user_name') || 
+                             localStorage.getItem('user_fullname') || 
+                             localStorage.getItem('fullname') || 
+                             localStorage.getItem('username');
+
+            if (userDisplay && fullName) {
+                userDisplay.textContent = `👋 ${fullName}`;
+            }
+        });
+
         document.querySelectorAll('.modal-trigger').forEach(btn => {
             btn.addEventListener('click', () => {
                 const target = btn.getAttribute('data-modal');
@@ -240,8 +254,12 @@
 
         function logout() {
             localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('username');
+            localStorage.removeItem('user_name');
             localStorage.removeItem('user_fullname');
+            localStorage.removeItem('fullname');
+            localStorage.removeItem('username');
+            localStorage.removeItem('user_reg');
+            localStorage.removeItem('user');
         }
     </script>
     <script src="portal.js"></script>

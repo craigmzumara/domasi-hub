@@ -11,12 +11,12 @@
 
     <header class="main-header">
        <div class="logo">
-    <h1>
-        <a href="index.html" class="logo-link" aria-label="Domasi Hub Homepage">
-            <img src="logo.svg" alt="Domasi Hub Logo" class="header-logo-img">
-        </a>
-    </h1>
-</div>
+            <h1>
+                <a href="index.html" class="logo-link" aria-label="Domasi Hub Homepage">
+                    <img src="logo.svg" alt="Domasi Hub Logo" class="header-logo-img">
+                </a>
+            </h1>
+        </div>
         <nav class="main-nav">
             <!-- Dynamic Auth Links Container -->
             <div id="authNavContainer" style="display: flex; gap: 0.75rem; align-items: center;">
@@ -42,7 +42,7 @@
         </nav>
     </header>
 
-    <main style="padding-bottom: 4rem;">
+    <main style="padding-bottom: 3rem;">
         <!-- 1. Hero Section & Integrated Search -->
         <section class="section-title" style="text-align: center; margin-bottom: 2.5rem; margin-top: 1.5rem;">
             <h2>Welcome to Domasi Hub</h2>
@@ -60,7 +60,7 @@
                     <input 
                         type="text" 
                         id="heroSearchInput" 
-                        placeholder="Search items, print stations or accommodations..." 
+                        placeholder="Search items, past papers, print stations or accommodations..." 
                         aria-label="Search listings"
                     >
                     <button id="heroSearchBtn" class="hero-search-btn" aria-label="Search">
@@ -78,7 +78,64 @@
             </div>
         </section>
 
-        <!-- 2. Featured / Search Results Section -->
+        <!-- 2. SPOTLIGHT LOCATION: DEDICATED ACADEMIC VAULT WINDOW -->
+        <section class="academic-display-window" style="margin-bottom: 3.5rem;">
+            <div class="academic-window-glow"></div>
+            
+            <div class="academic-window-content">
+                <div class="academic-window-badge">
+                    <span class="badge-dot"></span> Academic Vault & Resources
+                </div>
+                <h2>Explore Past Papers & Lecture Modules</h2>
+                <p>
+                    Access course guides, exam preparation revision packs, end-of-semester papers, and lecture slides shared across departments.
+                </p>
+
+                <div class="academic-feature-tags">
+                    <span class="feature-pill">📄 PDF Downloads</span>
+                    <span class="feature-pill">⚡ Instant Access</span>
+                    <span class="feature-pill">🎓 Department Filters</span>
+                </div>
+
+                <div class="academic-cta-group">
+                    <a href="academics.html" class="btn-academic-launch">
+                        <span>Access Academic Repository</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Side Preview Window -->
+            <div class="academic-window-preview">
+                <div class="preview-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span class="preview-title">academics_vault.pdf</span>
+                </div>
+                <div class="preview-body">
+                    <div class="preview-row">
+                        <span class="file-icon">📚</span>
+                        <div class="file-info">
+                            <strong>Education Psychology Module 1</strong>
+                            <small>Updated 2026 • BED/HUM</small>
+                        </div>
+                    </div>
+                    <div class="preview-row">
+                        <span class="file-icon">📝</span>
+                        <div class="file-info">
+                            <strong>Computer Science End Sem Exam</strong>
+                            <small>Past Paper • BED/SCI</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Featured / Search Results Section -->
         <section style="margin-bottom: 3.5rem;">
             <div class="section-title" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 0.5rem;">
                 <div>
@@ -95,7 +152,7 @@
             </div>
         </section>
 
-        <!-- 3. Primary Categories Section -->
+        <!-- 4. Primary Categories Grid -->
         <section>
             <div class="section-title" style="margin-bottom: 1.5rem;">
                 <h3 style="font-size: 1.5rem;">Explore Campus Utilities</h3>
@@ -103,6 +160,7 @@
             </div>
 
             <section class="services-grid">
+                <!-- Campus Marketplace Card -->
                 <div class="module-card">
                     <h4 style="font-size: 1.25rem;">Campus Marketplace</h4>
                     <p style="font-size: 0.95rem; line-height: 1.5; margin-bottom: 0.5rem;">
@@ -114,6 +172,7 @@
                     <a href="marketplace.html" class="btn-primary" style="margin-top: auto;">Explore Market</a>
                 </div>
 
+                <!-- Student Printing Hub Card -->
                 <div class="module-card">
                     <h4 style="font-size: 1.25rem;">Student Printing Hub</h4>
                     <p style="font-size: 0.95rem; line-height: 1.5; margin-bottom: 0.5rem;">
@@ -125,6 +184,7 @@
                     <a href="printing.html" class="btn-primary" style="margin-top: auto;">Find Printers</a>
                 </div>
 
+                <!-- Accommodation Directory Card -->
                 <div class="module-card">
                     <h4 style="font-size: 1.25rem;">Accommodation Directory</h4>
                     <p style="font-size: 0.95rem; line-height: 1.5; margin-bottom: 0.5rem;">
