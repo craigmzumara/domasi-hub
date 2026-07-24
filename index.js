@@ -1,6 +1,9 @@
 let allListings = [];
 let allAcademicResources = [];
 
+// LIVE BACKEND URL
+const API_URL = 'https://domasi-hub-4.onrender.com';
+
 document.addEventListener("DOMContentLoaded", () => {
     // 1. Auth Navigation UI Setup
     setupAuthNav();
@@ -90,7 +93,7 @@ async function loadHomepageData() {
     const featuredGrid = document.getElementById("featured-grid");
     
     try {
-        const response = await fetch("http://127.0.0.1:3000/api/listings");
+        const response = await fetch(`${API_URL}/api/listings`);
         const data = await response.json();
 
         if (data.status === "success" && data.listings) {
@@ -124,7 +127,7 @@ async function fetchAcademicVaultResources() {
     const uploadsCount = document.getElementById("academicUploadsCount");
 
     try {
-        const response = await fetch("http://127.0.0.1:3000/api/academics");
+        const response = await fetch(`${API_URL}/api/academics`);
         const data = await response.json();
 
         if (data.status === "success" && data.resources) {
@@ -195,7 +198,7 @@ function filterAcademicVault(department) {
 
 async function downloadAcademicFile(id, filename) {
     try {
-        const response = await fetch(`http://127.0.0.1:3000/api/academics/download/${id}`);
+        const response = await fetch(`${API_URL}/api/academics/download/${id}`);
         if (!response.ok) throw new Error("Download endpoint returned error");
 
         const data = await response.json();
@@ -237,32 +240,24 @@ function handleSearch() {
         return;
     }
 
-    // 1. Search General Campus Listings
+    const queryNoSpaces = query.replace(/\s+/g, '');
     const filteredListings = allListings.filter(item => {
         const titleMatch = (item.title || "").toLowerCase().includes(query);
         const locationMatch = (item.location_details || "").toLowerCase().includes(query);
         const conditionMatch = (item.item_condition || item.security_condition || "").toLowerCase().includes(query);
         const categoryMatch = (item.category || "").toLowerCase().includes(query);
-
         return titleMatch || locationMatch || conditionMatch || categoryMatch;
     });
 
-    // 2. Search Academic Resources (by title, department, or course code)
-    const queryNoSpaces = query.replace(/\s+/g, '');
     const filteredAcademics = allAcademicResources.filter(item => {
         const titleMatch = (item.title || "").toLowerCase().includes(query);
         const deptMatch = (item.department || "").toLowerCase().includes(query);
-        
         const rawCode = (item.course_code || "").toLowerCase();
         const codeMatch = rawCode.includes(query) || rawCode.replace(/\s+/g, '').includes(queryNoSpaces);
-
         return titleMatch || deptMatch || codeMatch;
     });
 
-    // Render combined results in the main search grid
     renderSearchResults(filteredListings, filteredAcademics, true, rawQuery);
-
-    // Also update the sidebar academic vault widget
     renderAcademicVault(filteredAcademics.slice(0, 3));
 }
 
@@ -289,11 +284,10 @@ function renderSearchResults(listingsItems = [], academicItems = [], isSearchRes
     if (totalResultsCount > 0) {
         featuredGrid.innerHTML = "";
 
-        // Render Academic Resources matched in Search
         academicItems.forEach(item => {
             const card = document.createElement("div");
             card.className = "module-card";
-            card.style.borderColor = "rgba(16, 185, 129, 0.4)"; // Subtle green tint for academic cards
+            card.style.borderColor = "rgba(16, 185, 129, 0.4)";
 
             const courseCode = item.course_code ? item.course_code.toUpperCase() : "MODULE";
             const uploader = item.uploaded_by || "Anonymous";
@@ -317,11 +311,9 @@ function renderSearchResults(listingsItems = [], academicItems = [], isSearchRes
                     📥 Download Paper / Resource
                 </button>
             `;
-
             featuredGrid.appendChild(card);
         });
 
-        // Render General Campus Listings
         listingsItems.forEach(item => {
             const card = document.createElement("div");
             card.className = "module-card";
@@ -361,7 +353,6 @@ function renderSearchResults(listingsItems = [], academicItems = [], isSearchRes
                 <div style="font-weight: 700; color: var(--primary-color); font-size: 1.1rem; margin-top: auto;">${priceFormatted}</div>
                 <a href="${targetPage}" class="btn-primary" style="text-align: center; margin-top: 0.75rem;">${buttonLabel}</a>
             `;
-
             featuredGrid.appendChild(card);
         });
 
