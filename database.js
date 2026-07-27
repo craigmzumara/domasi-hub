@@ -1,10 +1,12 @@
-const {pull, Connection} = require("pg");
+const { Pool } = require('pg');
 require('dotenv').config();
 
-const pool = new pool({
-    ConnectionString: process.env.DATABASE_URL,
-    ssl:{
-        rejectUnauthorized: false //required by render
-    }
-})
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL
+});
+
+pool.connect()
+  .then(() => console.log('Connected to PostgreSQL successfully!'))
+  .catch(err => console.error('Connection error', err.stack));
+
 module.exports = pool;

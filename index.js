@@ -1,8 +1,8 @@
 let allListings = [];
 let allAcademicResources = [];
 
-// LIVE BACKEND URL
-const API_URL = 'https://domasi-hub-4.onrender.com';
+// LOCAL-ONLY BACKEND URL
+const API_URL = 'http://localhost:3000';
 
 document.addEventListener("DOMContentLoaded", () => {
     // 1. Auth Navigation UI Setup
