@@ -1,4 +1,4 @@
-// BACKEND URL
+//  BACKEND URL
 const API_URL = window.location.hostname.includes('localhost') 
   ? 'http://localhost:3000' 
   : 'https://domasi-hub-production.up.railway.app';

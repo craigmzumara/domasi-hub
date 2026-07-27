@@ -1,3 +1,7 @@
+const API_URL = window.location.hostname.includes('localhost') 
+    ? 'http://localhost:3000' 
+    : 'https://domasi-hub-production.up.railway.app';
+
 document.addEventListener("DOMContentLoaded", () => {
     const marketplaceForm = document.getElementById("marketplaceForm");
     const printerForm = document.getElementById("printerForm");
@@ -42,7 +46,6 @@ async function handleFormSubmit(e, category) {
             imageBase64 = await fileToBase64(imageFile);
         }
 
-        // Retrieve logged-in user details from local storage (matching auth keys)
         const fullName = localStorage.getItem('user_name') || 
                          localStorage.getItem('user_fullname') || 
                          localStorage.getItem('fullname') || 
@@ -53,7 +56,6 @@ async function handleFormSubmit(e, category) {
                           localStorage.getItem('regNumber') || 
                           '';
 
-        // Format string as "Full Name (Reg Number)" or fallback cleanly
         const postedByFormatted = regNumber ? `${fullName} (${regNumber})` : fullName;
 
         const payload = {
@@ -68,8 +70,7 @@ async function handleFormSubmit(e, category) {
             location_details: formData.get("location_details") || ""
         };
 
-        // Send payload to backend server
-        const response = await fetch("http://127.0.0.1:3000/api/listings", {
+        const response = await fetch(`${API_URL}/api/listings`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
