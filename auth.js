@@ -1,5 +1,5 @@
-// LIVE BACKEND URL
-const API_URL = 'https://domasi-hub-4.onrender.com';
+// LOCAL BACKEND URL
+const API_URL = 'http://localhost:3000';
 
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Element Selectors
@@ -85,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
             password: passwordInput.value
         };
 
-        // FIXED: Use API_URL instead of localhost
         fetch(`${API_URL}/api/auth/signup`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
