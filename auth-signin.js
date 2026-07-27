@@ -1,8 +1,13 @@
+// LOCAL BACKEND URL
+const API_URL = 'http://localhost:3000';
+
 document.addEventListener('DOMContentLoaded', () => {
     const regInput = document.getElementById('regNumber');
     const regFeedback = document.getElementById('validationFeedback');
     const passwordInput = document.getElementById('password');
     const signInForm = document.getElementById('signInForm');
+
+    if (!signInForm) return;
 
     regInput.addEventListener('blur', () => {
         const value = regInput.value.trim();
@@ -19,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
             regFeedback.textContent = "";
         } else {
             regInput.className = "invalid";
-            regFeedback.textContent = "Invalid credentials.";
+            regFeedback.textContent = "Invalid credentials format.";
             regFeedback.className = "feedback-message error";
         }
     });
@@ -32,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     signInForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const rawReg = regInput.value.trim();
+        const rawReg = regInput.value.trim().toUpperCase();
         const isRegValid = /^BED\/(SCI|HUM|SSC|LAC)(?:\/ODEL)?\/\d{3,4}\/\d{2}$/i.test(rawReg);
 
         if (!isRegValid || passwordInput.value.trim() === "") {
@@ -45,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             password: passwordInput.value
         };
 
-        fetch('http://127.0.0.1:3000/api/auth/signin', {
+        fetch(`${API_URL}/api/auth/signin`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)

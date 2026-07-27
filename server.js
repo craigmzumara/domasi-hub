@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
 const path = require('path');
 
 const app = express();
@@ -13,25 +13,34 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Initialize PostgreSQL Database
+// Supabase Connection String
+const connectionString = process.env.DATABASE_URL || "postgresql://postgres.zerusmaghkoptkrezpes:73102002mzebrao@aws-0-eu-west-1.pooler.supabase.com:6543/postgres";
+
+// Pool configuration tailored for Supabase
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: connectionString,
   ssl: {
-    rejectUnauthorized: false // Required for Render Postgres
-  }
+    rejectUnauthorized: false
+  },
+  connectionTimeoutMillis: 10000, // Timeout after 10s if network hangs
+  idleTimeoutMillis: 30000
 });
 
 pool.connect()
- .then(() => {
-    console.log("Connected to PostgreSQL database successfully.");
+  .then(client => {
+    console.log("Connected to Supabase PostgreSQL database successfully.");
+    client.release();
     createTables();
   })
- .catch(err => console.error("Failed to connect to PostgreSQL:", err.message));
+  .catch(err => {
+    console.error("Failed to connect to Supabase PostgreSQL:", err.message);
+  });
 
 // Structural Table Generation
 async function createTables() {
-  const client = await pool.connect();
+  let client;
   try {
+    client = await pool.connect();
     await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -100,11 +109,11 @@ async function createTables() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log("Tables checked/created.");
+    console.log("Tables checked/created in Supabase.");
   } catch (err) {
-    console.error("Error creating tables:", err);
+    console.error("Error creating tables in Supabase:", err.message);
   } finally {
-    client.release();
+    if (client) client.release();
   }
 }
 
@@ -115,36 +124,40 @@ app.post('/api/auth/signup', async (req, res) => {
   const { fullname, regNumber, whatsapp, password } = req.body;
   const regPattern = /^BED\/(SCI|HUM|SSC|LAC)(?:\/ODEL)?\/\d{3,4}\/\d{2}$/i;
 
-  if (!regPattern.test(regNumber)) {
+  if (!regNumber || !regPattern.test(regNumber)) {
     return res.status(400).json({ status: "error", message: "Invalid registration format." });
   }
-  if (!fullname ||!whatsapp ||!password) {
+  if (!fullname || !whatsapp || !password) {
     return res.status(400).json({ status: "error", message: "All fields are required." });
   }
+
+  const cleanReg = regNumber.trim().toUpperCase();
 
   try {
     const passwordHash = await bcrypt.hash(password, 10);
     const sql = `INSERT INTO users (full_name, reg_number, whatsapp_number, password_hash) VALUES ($1, $2, $3, $4)`;
-    await pool.query(sql, [fullname, regNumber, whatsapp, passwordHash]);
+    await pool.query(sql, [fullname.trim(), cleanReg, whatsapp.trim(), passwordHash]);
     res.status(201).json({ status: "success", message: "Registration successful!" });
   } catch (error) {
-    if (error.code === '23505') { // unique violation
+    if (error.code === '23505') { // Unique constraint violation
       return res.status(400).json({ status: "error", message: "This registration number is already registered." });
     }
-    console.error(error);
+    console.error("Signup error:", error);
     res.status(500).json({ status: "error", message: "Database save error." });
   }
 });
 
 app.post('/api/auth/signin', async (req, res) => {
   const { regNumber, password } = req.body;
-  if (!regNumber ||!password) {
+  if (!regNumber || !password) {
     return res.status(400).json({ status: "error", message: "All fields are required." });
   }
 
+  const cleanReg = regNumber.trim().toUpperCase();
+
   try {
-    const sql = `SELECT full_name, password_hash FROM users WHERE reg_number = $1`;
-    const result = await pool.query(sql, [regNumber]);
+    const sql = `SELECT full_name, reg_number, password_hash FROM users WHERE UPPER(reg_number) = $1`;
+    const result = await pool.query(sql, [cleanReg]);
     const user = result.rows[0];
 
     if (!user) {
@@ -156,19 +169,20 @@ app.post('/api/auth/signin', async (req, res) => {
       res.status(200).json({
         status: "success",
         message: "Login successful!",
-        user: { fullname: user.full_name, regNumber: regNumber }
+        user: { fullname: user.full_name, regNumber: user.reg_number }
       });
     } else {
       res.status(401).json({ status: "error", message: "Invalid credentials." });
     }
   } catch (error) {
+    console.error("Signin error:", error);
     res.status(500).json({ status: "error", message: "Server error." });
   }
 });
 
 app.post('/api/admin/signin', (req, res) => {
   const { username, password } = req.body;
-  if (!username ||!password) {
+  if (!username || !password) {
     return res.status(400).json({ status: "error", message: "Username and password required." });
   }
   const cleanUser = username.toLowerCase().trim();
@@ -194,7 +208,7 @@ app.post('/api/admin/signin', (req, res) => {
    ========================================== */
 app.post('/api/listings', async (req, res) => {
   const { posted_by, title, category, price, contact_number, item_condition, security_condition, location_details, image_path } = req.body;
-  if (!title ||!category ||!price ||!contact_number) {
+  if (!title || !category || !price || !contact_number) {
     return res.status(400).json({ error: "Missing required fields." });
   }
   try {
@@ -270,7 +284,7 @@ app.get('/api/academics', async (req, res) => {
 
 app.post('/api/academics', async (req, res) => {
   const { title, department, academic_year, course_code, file_data, uploaded_by } = req.body;
-  if (!title ||!department ||!file_data) {
+  if (!title || !department || !file_data) {
     return res.status(400).json({ status: "error", message: "Missing required fields." });
   }
   try {
@@ -297,7 +311,7 @@ app.get('/api/academics/download/:id', async (req, res) => {
 app.delete('/api/academics/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    await pool.query(`DELETE FROM academic_resources WHERE id = $1`, [id]);
+    await pool.query(`DELETE FROM academics_resources WHERE id = $1`, [id]);
     res.status(200).json({ status: "success", message: "Academic resource deleted successfully." });
   } catch (err) {
     res.status(500).json({ status: "error", error: err.message });
@@ -318,7 +332,7 @@ app.get('/api/skills', async (req, res) => {
 
 app.post('/api/skills', async (req, res) => {
   const { provider_name, skill_category, service_title, description, starting_price, contact_number, portfolio_link } = req.body;
-  if (!service_title ||!skill_category ||!contact_number) {
+  if (!service_title || !skill_category || !contact_number) {
     return res.status(400).json({ status: "error", message: "Missing required service fields." });
   }
   try {
@@ -344,7 +358,7 @@ app.get('/api/landmarks', async (req, res) => {
 
 app.post('/api/landmarks', async (req, res) => {
   const { name, type, description, latitude, longitude, contact_number } = req.body;
-  if (!name ||!type ||!latitude ||!longitude) {
+  if (!name || !type || !latitude || !longitude) {
     return res.status(400).json({ status: "error", message: "Missing required landmark location fields." });
   }
   try {
@@ -370,7 +384,7 @@ app.get('/api/bulletins', async (req, res) => {
 
 app.post('/api/bulletins', async (req, res) => {
   const { notice_type, title, description, posted_by, event_date } = req.body;
-  if (!notice_type ||!title ||!description) {
+  if (!notice_type || !title || !description) {
     return res.status(400).json({ status: "error", message: "Missing required bulletin fields." });
   }
   try {
