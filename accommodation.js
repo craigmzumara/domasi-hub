@@ -1,5 +1,8 @@
+const API_URL = window.location.hostname.includes('localhost') 
+    ? 'http://localhost:3000' 
+    : 'https://domasi-hub-production.up.railway.app';
+
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Update Portal Nav Link
     const navWrapper = document.getElementById("portalNavWrapper");
     if (navWrapper) {
         if (localStorage.getItem('isLoggedIn') === 'true') {
@@ -9,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 2. Load Listings
     loadAccommodation();
 });
 
@@ -18,17 +20,16 @@ async function loadAccommodation() {
     if (!grid) return;
 
     try {
-        const response = await fetch("http://127.0.0.1:3000/api/listings?category=accommodation");
+        const response = await fetch(`${API_URL}/api/listings?category=accommodation`);
         const data = await response.json();
 
         if (data.status === "success" && data.listings && data.listings.length > 0) {
-            grid.innerHTML = ""; // Clear loader
+            grid.innerHTML = ""; 
             data.listings.forEach(item => {
                 const card = document.createElement("div");
                 card.className = "room-card";
                 card.style.cssText = "background: var(--bg-surface); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);";
 
-                // Currency placed before figure
                 const priceFormatted = "MWK " + parseFloat(item.price || 0).toLocaleString();
                 const cleanPhone = item.contact_number ? item.contact_number.replace(/[^0-9]/g, "") : "";
                 const imageSrc = item.image_path || "https://via.placeholder.com/300x200?text=No+Image";

@@ -1,3 +1,7 @@
+const API_URL = window.location.hostname.includes('localhost') 
+    ? 'http://localhost:3000' 
+    : 'https://domasi-hub-production.up.railway.app';
+
 document.addEventListener("DOMContentLoaded", () => {
     // 1. Check Auth Navigation state & dynamic user session
     setupAuthNav();
@@ -115,7 +119,7 @@ async function fetchResources() {
     const searchVal = searchInput ? searchInput.value.trim() : "";
     const deptVal = deptFilter ? deptFilter.value : "";
 
-    let url = "http://127.0.0.1:3000/api/academics?";
+    let url = `${API_URL}/api/academics?`;
     const params = new URLSearchParams();
 
     if (searchVal) params.append("search", searchVal);
@@ -187,7 +191,6 @@ async function handleUploadSubmit(e) {
         return;
     }
 
-    // Retrieve registration number if present to attach to the uploader string
     const regNumber = localStorage.getItem('user_reg') || localStorage.getItem('regNumber') || '';
     const rawName = user.fullname || user.user_fullname;
     const formattedUploader = regNumber ? `${rawName} (${regNumber})` : rawName;
@@ -221,7 +224,7 @@ async function handleUploadSubmit(e) {
             uploaded_by: formattedUploader
         };
 
-        const response = await fetch("http://127.0.0.1:3000/api/academics", {
+        const response = await fetch(`${API_URL}/api/academics`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
@@ -250,7 +253,7 @@ async function handleUploadSubmit(e) {
 
 async function downloadResource(id, filename) {
     try {
-        const response = await fetch(`http://127.0.0.1:3000/api/academics/download/${id}`);
+        const response = await fetch(`${API_URL}/api/academics/download/${id}`);
         if (!response.ok) throw new Error("Download endpoint returned error");
 
         const data = await response.json();
@@ -301,7 +304,6 @@ function escapeHTML(str) {
     );
 }
 
-// Global Fancy Pop-up Toast
 function showToast(message, type = "success") {
     let container = document.getElementById("toastContainer");
     if (!container) {

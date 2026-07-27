@@ -1,5 +1,8 @@
+const API_URL = window.location.hostname.includes('localhost') 
+    ? 'http://localhost:3000' 
+    : 'https://domasi-hub-production.up.railway.app';
+
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Update Portal Nav Link
     const navWrapper = document.getElementById("portalNavWrapper");
     if (navWrapper) {
         if (localStorage.getItem('isLoggedIn') === 'true') {
@@ -9,11 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 2. Load Listings
     loadMarketplace();
 });
 
-// Helper Function: Correct Title Casing
 function formatTitle(title) {
     if (!title) return 'Untitled Item';
     return title
@@ -29,7 +30,6 @@ function formatTitle(title) {
         .join(' ');
 }
 
-// Helper Function: Clean redundant "Condition" words
 function cleanConditionText(conditionStr) {
     if (!conditionStr) return 'N/A';
     return conditionStr.replace(/condition/gi, '').trim();
@@ -40,11 +40,11 @@ async function loadMarketplace() {
     if (!grid) return;
 
     try {
-        const response = await fetch("http://127.0.0.1:3000/api/listings?category=marketplace");
+        const response = await fetch(`${API_URL}/api/listings?category=marketplace`);
         const data = await response.json();
 
         if (data.status === "success" && data.listings && data.listings.length > 0) {
-            grid.innerHTML = ""; // Clear loader
+            grid.innerHTML = ""; 
             data.listings.forEach(item => {
                 const card = document.createElement("div");
                 card.className = "product-card";
@@ -52,7 +52,6 @@ async function loadMarketplace() {
                 const titleClean = formatTitle(item.title);
                 const conditionClean = cleanConditionText(item.item_condition);
                 
-                // Currency placed before figure
                 const priceFormatted = "MWK " + parseFloat(item.price || 0).toLocaleString();
                 const cleanPhone = item.contact_number ? item.contact_number.replace(/[^0-9]/g, "") : "";
                 const imageSrc = item.image_path || "https://via.placeholder.com/300x200?text=No+Image";
