@@ -42,11 +42,22 @@ async function handleFormSubmit(e, category) {
             imageBase64 = await fileToBase64(imageFile);
         }
 
-        // Retrieve logged-in user full name from local storage
-        const currentUserName = localStorage.getItem('user_fullname') || localStorage.getItem('username') || 'Campus Student';
+        // Retrieve logged-in user details from local storage (matching auth keys)
+        const fullName = localStorage.getItem('user_name') || 
+                         localStorage.getItem('user_fullname') || 
+                         localStorage.getItem('fullname') || 
+                         localStorage.getItem('username') || 
+                         'Campus Student';
+
+        const regNumber = localStorage.getItem('user_reg') || 
+                          localStorage.getItem('regNumber') || 
+                          '';
+
+        // Format string as "Full Name (Reg Number)" or fallback cleanly
+        const postedByFormatted = regNumber ? `${fullName} (${regNumber})` : fullName;
 
         const payload = {
-            posted_by: currentUserName,
+            posted_by: postedByFormatted,
             category: category,
             title: formData.get("title") || "",
             price: parseFloat(formData.get("price")) || 0,
@@ -57,7 +68,7 @@ async function handleFormSubmit(e, category) {
             location_details: formData.get("location_details") || ""
         };
 
-        // Explicitly hit the backend Express server on port 3000
+        // Send payload to backend server
         const response = await fetch("http://127.0.0.1:3000/api/listings", {
             method: "POST",
             headers: {

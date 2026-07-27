@@ -1,8 +1,10 @@
 let allListings = [];
 let allAcademicResources = [];
 
-// LOCAL-ONLY BACKEND URL
-const API_URL = 'http://localhost:3000';
+// BACKEND URL
+const API_URL = window.location.hostname.includes('localhost') 
+  ? 'http://localhost:3000' 
+  : 'https://domasi-hub-production.up.railway.app';
 
 document.addEventListener("DOMContentLoaded", () => {
     // 1. Auth Navigation UI Setup
