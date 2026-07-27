@@ -17,9 +17,11 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install dependencies & sync Capacitor
+      - name: Prepare web assets & sync Capacitor
         run: |
           npm ci || npm install
+          mkdir -p www
+          cp -r *.html *.js *.css *.svg www/ 2>/dev/null || true
           npx cap sync android
 
       - name: Set up JDK 17
